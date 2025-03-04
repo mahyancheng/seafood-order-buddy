@@ -4,7 +4,7 @@ import { useOrder } from "@/context/OrderContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Fish, Crab, Search } from "lucide-react";
+import { Fish, ShellIcon, Search } from "lucide-react";
 import ProductItem from "./ProductItem";
 import { Input } from "@/components/ui/input";
 import { Product } from "@/context/OrderContext";
@@ -51,7 +51,7 @@ const OrderForm: React.FC = () => {
                 className="capitalize flex items-center gap-1"
               >
                 {category === "fish" && <Fish className="h-4 w-4" />}
-                {category === "shellfish" && <Crab className="h-4 w-4" />}
+                {category === "shellfish" && <ShellIcon className="h-4 w-4" />}
                 {category}
               </TabsTrigger>
             ))}
