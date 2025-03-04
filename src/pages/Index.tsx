@@ -1,11 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from "react";
+import LoginForm from "@/components/LoginForm";
+import { useAuth } from "@/context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const Index = () => {
+  const { isAuthenticated } = useAuth();
+
+  // Redirect to dashboard if already logged in
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-blue-100 p-4">
+      <div className="w-full max-w-md mb-10 text-center animate-slide-down">
+        <h1 className="text-3xl font-medium mb-2">Seafood Wholesale</h1>
+        <p className="text-muted-foreground">Order Management System</p>
+      </div>
+      <LoginForm />
+      <div className="mt-8 text-center text-sm text-muted-foreground animate-fade-in">
+        <p>Demo Credentials:</p>
+        <p className="mt-1">Email: john@seafood.com</p>
+        <p>Password: password123</p>
       </div>
     </div>
   );
