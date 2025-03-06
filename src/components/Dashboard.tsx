@@ -2,7 +2,6 @@
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useOrder } from "@/context/OrderContext";
-import ClientSelector from "./ClientSelector";
 import OrderForm from "./OrderForm";
 import OrderSummary from "./OrderSummary";
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,7 @@ import { LogOut, UserRound } from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const { selectedClient } = useOrder();
-
+  
   return (
     <div className="min-h-screen flex flex-col animate-fade-in">
       {/* Header */}
@@ -39,20 +37,14 @@ const Dashboard: React.FC = () => {
       
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-4 py-6">
-        {!selectedClient ? (
-          <div className="max-w-md mx-auto">
-            <ClientSelector />
+        <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+          <div className="lg:col-span-4">
+            <OrderForm />
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-            <div className="lg:col-span-4">
-              <OrderForm />
-            </div>
-            <div className="lg:col-span-3">
-              <OrderSummary />
-            </div>
+          <div className="lg:col-span-3">
+            <OrderSummary />
           </div>
-        )}
+        </div>
       </main>
       
       {/* Footer */}

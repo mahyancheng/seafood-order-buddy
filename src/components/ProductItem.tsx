@@ -14,16 +14,16 @@ interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
-  const { addProductToOrder } = useOrder();
+  const { addProductToCart } = useOrder();
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddToOrder = () => {
+  const handleAddToCart = () => {
     setIsLoading(true);
     // Simulate a small delay for better UX
     setTimeout(() => {
-      addProductToOrder(product.id, quantity, notes);
+      addProductToCart(product.id, quantity, notes);
       setQuantity(1);
       setNotes("");
       setIsLoading(false);
@@ -88,12 +88,12 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
       
       <CardFooter className="p-4 pt-0">
         <Button 
-          onClick={handleAddToOrder}
+          onClick={handleAddToCart}
           className="w-full group"
           disabled={isLoading || quantity <= 0}
         >
           <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform" />
-          {isLoading ? "Adding..." : "Add to Order"}
+          {isLoading ? "Adding..." : "Add to Cart"}
         </Button>
       </CardFooter>
     </Card>

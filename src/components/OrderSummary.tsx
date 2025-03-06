@@ -16,118 +16,80 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const OrderSummary: React.FC = () => {
-  const { currentOrder, selectedClient, products, updateProductQuantity, removeProductFromOrder, updateOrderNotes, updateDeliveryDate, submitOrder } = useOrder();
-  const [date, setDate] = useState<Date | undefined>(
-    currentOrder?.deliveryDate ? new Date(currentOrder.deliveryDate) : undefined
-  );
+  const { cart, products, updateProductQuantity, removeProductFromCart, submitOrder, getCartTotal } = useOrder();
+  const [date, setDate] = useState<Date | undefined>(new Date(Date.now() + 86400000)); // Tomorrow
+  const [specialInstructions, setSpecialInstructions] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  if (!currentOrder || !selectedClient) {
-    return (
-      <Card className="h-full flex items-center justify-center animate-fade-in">
-        <CardContent className="text-center p-6">
-          <p className="text-muted-foreground">
-            Select a client to start a new order
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const [clientInfo, setClientInfo] = useState({
+    name: "",
+    address: "",
+    contactPerson: "",
+    phone: "",
+    email: ""
+  });
+  const [clientFormOpen, setClientFormOpen] = useState(false);
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity > 0) {
       updateProductQuantity(productId, newQuantity);
     } else {
-      removeProductFromOrder(productId);
+      removeProductFromCart(productId);
     }
-  };
-
-  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateOrderNotes(e.target.value);
   };
 
   const handleDateSelect = (date: Date | undefined) => {
     setDate(date);
-    if (date) {
-      updateDeliveryDate(format(date, "yyyy-MM-dd"));
-    }
+  };
+
+  const handleClientInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setClientInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmitOrder = () => {
     setIsSubmitting(true);
+    // Validate client info
+    if (!clientInfo.name || !clientInfo.address || !clientInfo.contactPerson || !clientInfo.phone) {
+      toast.error("Please fill in all required client information");
+      setIsSubmitting(false);
+      return;
+    }
+    
     // Simulate API call
     setTimeout(() => {
-      submitOrder();
+      submitOrder(clientInfo);
+      setClientInfo({
+        name: "",
+        address: "",
+        contactPerson: "",
+        phone: "",
+        email: ""
+      });
+      setSpecialInstructions("");
       setIsSubmitting(false);
+      setClientFormOpen(false);
     }, 1000);
   };
+
+  const cartTotal = getCartTotal();
 
   return (
     <Card className="h-full flex flex-col animate-slide-up">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-xl font-medium">Order Summary</CardTitle>
+            <CardTitle className="text-xl font-medium">Cart Summary</CardTitle>
             <CardDescription>
               Review and submit your order
             </CardDescription>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
-                <FileEdit className="h-4 w-4" />
-                <span className="hidden sm:inline">Client Info</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Client Information</DialogTitle>
-                <DialogDescription>
-                  Details for delivery and contact
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-3">
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Company Name</label>
-                    <p className="text-sm">{selectedClient.name}</p>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm font-medium">Contact Person</label>
-                    <p className="text-sm">{selectedClient.contactPerson}</p>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm font-medium">Phone</label>
-                    <p className="text-sm">{selectedClient.phone}</p>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm font-medium">Email</label>
-                    <p className="text-sm">{selectedClient.email}</p>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm font-medium">Delivery Address</label>
-                    <p className="text-sm">{selectedClient.address}</p>
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline">Close</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </div>
       </CardHeader>
       
       <div className="px-6 py-2">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Client:</span>
-          <span className="font-medium">{selectedClient.name}</span>
-        </div>
-        
         <div className="flex items-center justify-between text-sm mt-1">
           <span className="text-muted-foreground">Delivery Date:</span>
           <Popover>
@@ -160,15 +122,15 @@ const OrderSummary: React.FC = () => {
       <Separator className="my-2" />
       
       <CardContent className="flex-grow p-0 overflow-hidden">
-        <ScrollArea className="h-[calc(100vh-470px)]">
+        <ScrollArea className="h-[calc(100vh-400px)]">
           <div className="px-6 py-4 space-y-4">
-            {currentOrder.items.length === 0 ? (
+            {cart.length === 0 ? (
               <div className="text-center py-6 text-muted-foreground">
-                No items in order yet. Add products from the list.
+                No items in cart yet. Add products from the list.
               </div>
             ) : (
               <div className="space-y-4">
-                {currentOrder.items.map((item) => {
+                {cart.map((item) => {
                   const product = products.find(p => p.id === item.productId);
                   if (!product) return null;
                   
@@ -212,7 +174,7 @@ const OrderSummary: React.FC = () => {
                               variant="ghost"
                               size="icon"
                               className="h-6 w-6 text-destructive"
-                              onClick={() => removeProductFromOrder(item.productId)}
+                              onClick={() => removeProductFromCart(item.productId)}
                             >
                               <Trash2 className="h-3 w-3" />
                             </Button>
@@ -234,7 +196,7 @@ const OrderSummary: React.FC = () => {
               <Separator />
               <div className="flex justify-between text-lg font-medium">
                 <span>Total:</span>
-                <span>${currentOrder.total.toFixed(2)}</span>
+                <span>${cartTotal.toFixed(2)}</span>
               </div>
               
               <div className="space-y-2">
@@ -244,8 +206,8 @@ const OrderSummary: React.FC = () => {
                 <Textarea
                   id="specialInstructions"
                   placeholder="Add any special instructions for this order..."
-                  value={currentOrder.specialInstructions}
-                  onChange={handleNotesChange}
+                  value={specialInstructions}
+                  onChange={(e) => setSpecialInstructions(e.target.value)}
                   className="resize-none h-24"
                 />
               </div>
@@ -255,33 +217,117 @@ const OrderSummary: React.FC = () => {
       </CardContent>
       
       <CardFooter className="p-6">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        <Dialog open={clientFormOpen} onOpenChange={setClientFormOpen}>
+          <DialogTrigger asChild>
             <Button 
               className="w-full" 
               size="lg"
-              disabled={currentOrder.items.length === 0 || isSubmitting}
+              disabled={cart.length === 0}
             >
               <Send className="mr-2 h-4 w-4" />
-              {isSubmitting ? "Submitting..." : "Submit Order"}
+              Proceed to Checkout
             </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirm Order Submission</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to submit this order for {selectedClient.name}?
-                This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleSubmitOrder}>
-                Submit Order
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Client Information</DialogTitle>
+              <DialogDescription>
+                Enter client details for the order
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="name" className="text-right text-sm">
+                  Company Name *
+                </label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={clientInfo.name}
+                  onChange={handleClientInfoChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="address" className="text-right text-sm">
+                  Address *
+                </label>
+                <Input
+                  id="address"
+                  name="address"
+                  value={clientInfo.address}
+                  onChange={handleClientInfoChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="contactPerson" className="text-right text-sm">
+                  Contact Person *
+                </label>
+                <Input
+                  id="contactPerson"
+                  name="contactPerson"
+                  value={clientInfo.contactPerson}
+                  onChange={handleClientInfoChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="phone" className="text-right text-sm">
+                  Phone *
+                </label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={clientInfo.phone}
+                  onChange={handleClientInfoChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="email" className="text-right text-sm">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={clientInfo.email}
+                  onChange={handleClientInfoChange}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button disabled={isSubmitting}>
+                    {isSubmitting ? "Submitting..." : "Submit Order"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Order Submission</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to submit this order?
+                      This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleSubmitOrder}>
+                      Submit Order
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardFooter>
     </Card>
   );

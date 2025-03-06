@@ -14,6 +14,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -83,8 +84,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Show success message
         toast.success(`Welcome back, ${userWithoutPassword.name}`);
         
-        // Redirect to dashboard
-        navigate("/dashboard");
+        // Redirect based on role
+        if (userWithoutPassword.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         throw new Error("Invalid email or password");
       }
@@ -109,6 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     isLoading,
     isAuthenticated: !!user,
+    isAdmin: user?.role === "admin",
     login,
     logout,
   };

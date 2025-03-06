@@ -29,7 +29,7 @@ const OrderForm: React.FC = () => {
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-medium">Select Products</CardTitle>
         <CardDescription>
-          Browse and add products to the current order
+          Browse and add products to your cart
         </CardDescription>
         <div className="relative mt-2">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
