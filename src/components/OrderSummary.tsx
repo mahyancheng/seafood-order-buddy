@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useOrder } from "@/context/OrderContext";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { toast } from "sonner"; // Add this import for toast
 
 const OrderSummary: React.FC = () => {
   const { cart, products, updateProductQuantity, removeProductFromCart, submitOrder, getCartTotal } = useOrder();

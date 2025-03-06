@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useOrder } from "@/context/OrderContext";
@@ -12,7 +11,7 @@ import { BarChart, List, Bell, CheckCircle, Clock, XCircle, LogOut, UserRound, P
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const { orders } = useOrder();
+  const { orders, products } = useOrder(); // Import products from OrderContext
   const [activeTab, setActiveTab] = useState("overview");
 
   // Count orders by status
