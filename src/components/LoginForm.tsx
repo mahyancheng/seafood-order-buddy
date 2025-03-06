@@ -17,9 +17,9 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md glass-card animate-fade-in">
+    <Card className="w-full max-w-md glass-card animate-fade-in border-[#ea384c]/20">
       <CardHeader className="space-y-2 text-center">
-        <CardTitle className="text-2xl font-medium">Welcome Back</CardTitle>
+        <CardTitle className="text-2xl font-medium text-[#ea384c]">Welcome Back</CardTitle>
         <CardDescription>
           Sign in to access your seafood order dashboard
         </CardDescription>
@@ -58,7 +58,7 @@ const LoginForm: React.FC = () => {
         <CardFooter>
           <Button 
             type="submit" 
-            className="w-full group relative overflow-hidden" 
+            className="w-full group relative overflow-hidden bg-[#ea384c] hover:bg-[#ea384c]/90" 
             disabled={isLoading}
           >
             <span className="relative z-10 flex items-center justify-center gap-2">

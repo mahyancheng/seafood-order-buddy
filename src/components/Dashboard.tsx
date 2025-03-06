@@ -27,22 +27,23 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen flex flex-col animate-fade-in">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary/10 p-2 rounded-md">
-              <ShoppingBag className="h-5 w-5 text-primary" />
-            </div>
-            <h1 className="text-xl font-medium">Seafood Orders</h1>
-            <div className="hidden md:flex gap-2 items-center ml-4 text-sm">
-              <span className="text-muted-foreground">|</span>
-              <span className="text-muted-foreground font-medium">Salesperson Dashboard</span>
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <img 
+              src="/lovable-uploads/4fc43751-b8dd-4328-872a-45392c5523f0.png" 
+              alt="How Kee Frozen Foods Logo" 
+              className="h-10 w-10"
+            />
+            <div>
+              <h1 className="text-xl font-medium text-[#ea384c]">How Kee Frozen Foods</h1>
+              <p className="text-xs text-muted-foreground">Sdn Bhd</p>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 bg-secondary px-3 py-1.5 rounded-full text-sm">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+              <Avatar className="h-6 w-6 bg-[#ea384c]/10">
+                <AvatarFallback className="text-[#ea384c]">{user?.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <span className="font-medium">{user?.name}</span>
             </div>
@@ -95,7 +96,7 @@ const Dashboard: React.FC = () => {
       {/* Footer */}
       <footer className="border-t py-4 bg-white/80 backdrop-blur-md mt-auto">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Seafood Wholesale Management System
+          &copy; {new Date().getFullYear()} How Kee Frozen Foods Sdn Bhd - Seafood Wholesale Management System
         </div>
       </footer>
     </div>

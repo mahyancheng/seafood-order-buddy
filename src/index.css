@@ -14,24 +14,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 18%;
 
-    --primary: 210 100% 50%;
+    --primary: 357 82% 57%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 20% 18%;
+    --secondary: 357 82% 96%;
+    --secondary-foreground: 357 82% 57%;
 
     --muted: 210 20% 96%;
     --muted-foreground: 220 10% 50%;
 
-    --accent: 210 20% 96%;
-    --accent-foreground: 220 20% 18%;
+    --accent: 357 82% 96%;
+    --accent-foreground: 357 82% 57%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 20% 92%;
     --input: 220 20% 92%;
-    --ring: 210 100% 50%;
+    --ring: 357 82% 57%;
 
     --radius: 0.75rem;
   }
@@ -46,16 +46,16 @@
     --popover: 220 20% 14%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 100% 50%;
+    --primary: 357 82% 57%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 20% 16%;
+    --secondary: 357 82% 16%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 220 20% 16%;
     --muted-foreground: 220 10% 70%;
 
-    --accent: 220 20% 16%;
+    --accent: 357 82% 20%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84% 60%;
@@ -63,7 +63,7 @@
 
     --border: 220 20% 20%;
     --input: 220 20% 20%;
-    --ring: 210 100% 70%;
+    --ring: 357 82% 57%;
   }
 }
 
@@ -112,5 +112,23 @@
   
   .glass-input {
     @apply bg-white/40 backdrop-blur-sm border border-white/30 focus:bg-white/60;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 }
