@@ -62,7 +62,7 @@ const Dashboard: React.FC = () => {
           <TabsList className="grid grid-cols-4 mb-6 bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger value="newOrder" className="flex items-center gap-2">
               <Package className="h-4 w-4" />
-              <span>New Order Test</span>
+              <span>New Order</span>
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <History className="h-4 w-4" />
