@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useAuth, UserWithCredentials } from "@/context/AuthContext";
 import { 
@@ -120,12 +119,12 @@ const UserManagement: React.FC = () => {
     setShowUserStatsDialog(true);
   };
   
-  // Get user orders
+  // Get user orders - now properly filtering by userId
   const getUserOrders = (userId: string) => {
     return orders.filter(order => order.userId === userId);
   };
   
-  // Calculate user statistics
+  // Calculate user statistics 
   const calculateUserStats = (userId: string) => {
     const userOrders = getUserOrders(userId);
     

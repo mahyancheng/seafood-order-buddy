@@ -22,6 +22,7 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
+  userId: string; // Add userId to track who created the order
   items: OrderItem[];
   status: "draft" | "submitted" | "processing" | "completed" | "cancelled";
   deliveryDate: string;
@@ -111,6 +112,7 @@ const MOCK_PRODUCTS: Product[] = [
 const MOCK_ORDERS: Order[] = [
   {
     id: "order-1646316000000",
+    userId: "1", // Add user ID (John Smith)
     items: [
       { productId: "p1", quantity: 5, unitPrice: 21.99, notes: "" },
       { productId: "p3", quantity: 2, unitPrice: 45.99, notes: "" }
@@ -130,6 +132,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: "order-1646402400000",
+    userId: "1", // Add user ID (John Smith)
     items: [
       { productId: "p2", quantity: 10, unitPrice: 18.50, notes: "" },
       { productId: "p4", quantity: 3, unitPrice: 32.50, notes: "" }
@@ -149,6 +152,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: "order-1647266400000",
+    userId: "2", // Add user ID (Admin User)
     items: [
       { productId: "p5", quantity: 15, unitPrice: 24.99, notes: "" },
       { productId: "p6", quantity: 8, unitPrice: 28.99, notes: "" }
@@ -168,6 +172,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: "order-1647698400000",
+    userId: "1", // Add user ID (John Smith)
     items: [
       { productId: "p1", quantity: 7, unitPrice: 21.99, notes: "" },
       { productId: "p4", quantity: 5, unitPrice: 32.50, notes: "" }
@@ -187,6 +192,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: "order-1648044000000",
+    userId: "2", // Add user ID (Admin User)
     items: [
       { productId: "p3", quantity: 3, unitPrice: 45.99, notes: "" },
       { productId: "p2", quantity: 12, unitPrice: 18.50, notes: "" }
@@ -206,6 +212,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: "order-1648130400000",
+    userId: "1", // Add user ID (John Smith)
     items: [
       { productId: "p6", quantity: 10, unitPrice: 28.99, notes: "" },
       { productId: "p5", quantity: 8, unitPrice: 24.99, notes: "" }
@@ -309,8 +316,22 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return;
     }
     
+    // Get current user ID from localStorage, or default to "1" if not available
+    const storedUser = localStorage.getItem("user");
+    let userId = "1"; // Default to user ID 1 if no user is found
+    
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        userId = user.id;
+      } catch (error) {
+        console.error("Failed to parse stored user:", error);
+      }
+    }
+    
     const submittedOrder: Order = {
       id: `order-${Date.now()}`,
+      userId, // Add the userId to new orders
       items: [...cart],
       status: "submitted",
       deliveryDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
