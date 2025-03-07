@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import ProductManagement from "./ProductManagement";
 import DownloadCenter from "./DownloadCenter";
+import UserManagement from "./UserManagement";
 import { 
   BarChart, PieChart, TrendingUp, List, 
   Bell, CheckCircle, Clock, XCircle, 
@@ -169,7 +170,7 @@ const AdminDashboard: React.FC = () => {
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-7 w-full max-w-6xl mx-auto bg-secondary/50 p-1 rounded-lg">
+          <TabsList className="grid grid-cols-8 w-full max-w-6xl mx-auto bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               <span>Overview</span>
@@ -182,8 +183,12 @@ const AdminDashboard: React.FC = () => {
               <Package className="h-4 w-4" />
               <span>Products</span>
             </TabsTrigger>
-            <TabsTrigger value="clients" className="flex items-center gap-2">
+            <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
+              <span>Users</span>
+            </TabsTrigger>
+            <TabsTrigger value="clients" className="flex items-center gap-2">
+              <UserRound className="h-4 w-4" />
               <span>Clients</span>
             </TabsTrigger>
             <TabsTrigger value="inventory" className="flex items-center gap-2">
@@ -529,6 +534,11 @@ const AdminDashboard: React.FC = () => {
           {/* Products Tab */}
           <TabsContent value="products" className="space-y-6 animate-fade-in">
             <ProductManagement />
+          </TabsContent>
+          
+          {/* Users Tab */}
+          <TabsContent value="users" className="space-y-6 animate-fade-in">
+            <UserManagement />
           </TabsContent>
           
           {/* Clients Tab */}
