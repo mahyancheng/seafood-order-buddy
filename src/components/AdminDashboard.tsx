@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useOrder } from "@/context/OrderContext";
@@ -10,13 +9,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import ProductManagement from "./ProductManagement";
+import DownloadCenter from "./DownloadCenter";
 import { 
   BarChart, PieChart, TrendingUp, List, 
   Bell, CheckCircle, Clock, XCircle, 
   LogOut, UserRound, Package, Settings, 
   Users, ShoppingBag, Truck, FileText, 
   Search, Filter, AlertTriangle, BarChart2,
-  ArrowUpRight, Layers, Calendar
+  ArrowUpRight, Layers, Calendar, Download
 } from "lucide-react";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -168,7 +169,7 @@ const AdminDashboard: React.FC = () => {
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-5 w-full max-w-4xl mx-auto bg-secondary/50 p-1 rounded-lg">
+          <TabsList className="grid grid-cols-7 w-full max-w-6xl mx-auto bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               <span>Overview</span>
@@ -177,6 +178,10 @@ const AdminDashboard: React.FC = () => {
               <ShoppingBag className="h-4 w-4" />
               <span>Orders</span>
             </TabsTrigger>
+            <TabsTrigger value="products" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              <span>Products</span>
+            </TabsTrigger>
             <TabsTrigger value="clients" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               <span>Clients</span>
@@ -184,6 +189,10 @@ const AdminDashboard: React.FC = () => {
             <TabsTrigger value="inventory" className="flex items-center gap-2">
               <Layers className="h-4 w-4" />
               <span>Inventory</span>
+            </TabsTrigger>
+            <TabsTrigger value="downloads" className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              <span>Downloads</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
@@ -517,6 +526,11 @@ const AdminDashboard: React.FC = () => {
             </Card>
           </TabsContent>
           
+          {/* Products Tab */}
+          <TabsContent value="products" className="space-y-6 animate-fade-in">
+            <ProductManagement />
+          </TabsContent>
+          
           {/* Clients Tab */}
           <TabsContent value="clients" className="space-y-6 animate-fade-in">
             <Card>
@@ -549,6 +563,11 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          
+          {/* Downloads Tab */}
+          <TabsContent value="downloads" className="space-y-6 animate-fade-in">
+            <DownloadCenter />
           </TabsContent>
           
           {/* Settings Tab */}

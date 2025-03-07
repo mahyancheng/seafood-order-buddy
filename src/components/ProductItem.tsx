@@ -31,22 +31,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
   };
 
   return (
-    <Card className="overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-lg">
-      <div className="aspect-square overflow-hidden relative">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-          loading="lazy"
-        />
-        <Badge
-          variant="secondary"
-          className="absolute top-2 right-2 font-medium"
-        >
-          ${product.price.toFixed(2)} / {product.unit}
-        </Badge>
-      </div>
-      
+    <Card className="flex flex-col h-full transition-all duration-300 hover:shadow-lg">
       <CardContent className="flex-grow p-4">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-medium">{product.name}</h3>
@@ -54,6 +39,13 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
             {product.category}
           </Badge>
         </div>
+        
+        <Badge
+          variant="secondary"
+          className="mb-3 font-medium"
+        >
+          ${product.price.toFixed(2)} / {product.unit}
+        </Badge>
         
         <div className="space-y-3 mt-3">
           <div>

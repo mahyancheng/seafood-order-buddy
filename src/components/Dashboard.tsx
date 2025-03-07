@@ -6,6 +6,7 @@ import OrderForm from "./OrderForm";
 import OrderSummary from "./OrderSummary";
 import OrderHistory from "./OrderHistory";
 import MonthlyReport from "./MonthlyReport";
+import DownloadCenter from "./DownloadCenter";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -16,7 +17,8 @@ import {
   Package, 
   ShoppingBag, 
   BarChart2, 
-  History 
+  History,
+  Download
 } from "lucide-react";
 
 const Dashboard: React.FC = () => {
@@ -57,7 +59,7 @@ const Dashboard: React.FC = () => {
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-4 py-6">
         <Tabs defaultValue="newOrder" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-6 bg-secondary/50 p-1 rounded-lg">
+          <TabsList className="grid grid-cols-4 mb-6 bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger value="newOrder" className="flex items-center gap-2">
               <Package className="h-4 w-4" />
               <span>New Order</span>
@@ -69,6 +71,10 @@ const Dashboard: React.FC = () => {
             <TabsTrigger value="report" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               <span>Monthly Report</span>
+            </TabsTrigger>
+            <TabsTrigger value="downloads" className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              <span>Downloads</span>
             </TabsTrigger>
           </TabsList>
           
@@ -89,6 +95,10 @@ const Dashboard: React.FC = () => {
           
           <TabsContent value="report" className="animate-fade-in">
             <MonthlyReport />
+          </TabsContent>
+          
+          <TabsContent value="downloads" className="animate-fade-in">
+            <DownloadCenter />
           </TabsContent>
         </Tabs>
       </main>
