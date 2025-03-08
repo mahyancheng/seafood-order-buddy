@@ -152,7 +152,6 @@ const Dashboard: React.FC = () => {
                   </Avatar>
                   <div className="flex-1">
                     <p className="text-sm font-medium">{user?.name}</p>
-                    {/* We need to remove the email property since it's not available in the User type */}
                     <p className="text-xs text-muted-foreground">{user?.role}</p>
                   </div>
                   <Button variant="ghost" size="icon" onClick={logout}>
