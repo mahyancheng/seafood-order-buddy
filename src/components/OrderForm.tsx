@@ -224,48 +224,71 @@ const OrderForm: React.FC = () => {
   return (
     <Card className="shadow-md">
       {/* Receipt Header */}
-      <CardHeader className="p-6 bg-white">
+      <CardHeader className="p-4 bg-white">
         <div className="flex flex-col items-center">
-          <img 
-            src="/lovable-uploads/0eec3a42-3ec3-47c8-a425-5f779b95d54f.png" 
-            alt="How Kee Frozen Foods Header" 
-            className="w-full max-w-2xl mb-4"
-          />
-        </div>
-        
-        {/* Client Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border p-4 rounded-md bg-gray-50">
-          <div className="space-y-3">
-            <div>
-              <label htmlFor="clientName" className="text-sm font-medium block mb-1">
-                Client Name <span className="text-red-500">*</span>
-              </label>
-              <Input
-                id="clientName"
-                name="name"
-                value={clientInfo.name}
-                onChange={handleClientInfoChange}
-                placeholder="Company or client name"
-                required
+          <div className="flex items-center w-full justify-center sm:justify-between mb-3">
+            <div className="flex items-center">
+              <img 
+                src="/lovable-uploads/4fc43751-b8dd-4328-872a-45392c5523f0.png" 
+                alt="How Kee Logo" 
+                className="h-14 w-14 mr-3"
               />
+              <div className="text-left hidden sm:block">
+                <h2 className="font-bold text-[#ea384c] text-xl">HOW KEE</h2>
+                <h3 className="font-bold text-[#ea384c]">FROZEN FOODS SDN BHD</h3>
+              </div>
             </div>
             
-            <div>
-              <label htmlFor="address" className="text-sm font-medium block mb-1">
-                Address
-              </label>
-              <Textarea
-                id="address"
-                name="address"
-                value={clientInfo.address}
-                onChange={(e) => setClientInfo(prev => ({ ...prev, address: e.target.value }))}
-                placeholder="Delivery address"
-                className="resize-none h-20"
-              />
+            <div className="text-right hidden sm:block">
+              <p className="text-sm">No. 41-C, Jalan Cerdas,</p>
+              <p className="text-sm">Taman Connaught, Cheras,</p>
+              <p className="text-sm">56000 Kuala Lumpur</p>
+              <p className="text-sm">Tel: 03-9133 6172, 012-634 3172</p>
             </div>
           </div>
           
-          <div className="space-y-3">
+          {/* Mobile header details */}
+          <div className="sm:hidden text-center w-full mb-2">
+            <h2 className="font-bold text-[#ea384c] text-xl">HOW KEE FROZEN FOODS SDN BHD</h2>
+            <p className="text-xs">No. 41-C, Jalan Cerdas, Taman Connaught, Cheras, 56000 KL</p>
+            <p className="text-xs">Tel: 03-9133 6172, 012-634 3172</p>
+          </div>
+          
+          <div className="w-full border-b-2 border-[#ea384c] my-2"></div>
+          <h3 className="font-bold text-xl w-full text-center">SALES ORDER</h3>
+        </div>
+        
+        {/* Client Information */}
+        <div className="grid grid-cols-1 gap-3 mt-4 border p-3 rounded-md bg-gray-50">
+          <div>
+            <label htmlFor="clientName" className="text-sm font-medium block mb-1">
+              Client Name <span className="text-red-500">*</span>
+            </label>
+            <Input
+              id="clientName"
+              name="name"
+              value={clientInfo.name}
+              onChange={handleClientInfoChange}
+              placeholder="Company or client name"
+              required
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="address" className="text-sm font-medium block mb-1">
+              Address
+            </label>
+            <Textarea
+              id="address"
+              name="address"
+              value={clientInfo.address}
+              onChange={(e) => setClientInfo(prev => ({ ...prev, address: e.target.value }))}
+              placeholder="Delivery address"
+              className="resize-none h-16"
+            />
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="contactPerson" className="text-sm font-medium block mb-1">
                 Contact Person <span className="text-red-500">*</span>
@@ -293,7 +316,9 @@ const OrderForm: React.FC = () => {
                 required
               />
             </div>
-            
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="email" className="text-sm font-medium block mb-1">
                 Email
@@ -307,53 +332,53 @@ const OrderForm: React.FC = () => {
                 placeholder="Contact email"
               />
             </div>
-          </div>
-          
-          <div>
-            <label htmlFor="deliveryDate" className="text-sm font-medium block mb-1">
-              Delivery Date
-            </label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !deliveryDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {deliveryDate ? format(deliveryDate, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={deliveryDate}
-                  onSelect={setDeliveryDate}
-                  initialFocus
-                  disabled={(date) => date < new Date()}
-                />
-              </PopoverContent>
-            </Popover>
+            
+            <div>
+              <label htmlFor="deliveryDate" className="text-sm font-medium block mb-1">
+                Delivery Date
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !deliveryDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {deliveryDate ? format(deliveryDate, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={deliveryDate}
+                    onSelect={setDeliveryDate}
+                    initialFocus
+                    disabled={(date) => date < new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
         </div>
       </CardHeader>
       
       <Separator />
       
-      <CardContent className="p-6">
+      <CardContent className="p-3 sm:p-6">
         {/* Order Items Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
+        <div className="overflow-x-auto -mx-3 sm:mx-0">
+          <table className="w-full border-collapse min-w-[500px]">
             <thead>
               <tr className="bg-gray-100">
-                <th className="p-2 text-left border border-gray-200 w-16">No.</th>
+                <th className="p-2 text-left border border-gray-200 w-10 sm:w-16">No.</th>
                 <th className="p-2 text-left border border-gray-200">Description</th>
-                <th className="p-2 text-left border border-gray-200 w-24">Quantity</th>
-                <th className="p-2 text-left border border-gray-200 w-32">Unit Price</th>
-                <th className="p-2 text-left border border-gray-200 w-32">Total</th>
-                <th className="p-2 text-center border border-gray-200 w-16">Action</th>
+                <th className="p-2 text-left border border-gray-200 w-16 sm:w-24">Qty</th>
+                <th className="p-2 text-left border border-gray-200 w-20 sm:w-32">Unit Price</th>
+                <th className="p-2 text-left border border-gray-200 w-20 sm:w-32">Total</th>
+                <th className="p-2 text-center border border-gray-200 w-10 sm:w-16"></th>
               </tr>
             </thead>
             <tbody>
@@ -363,9 +388,9 @@ const OrderForm: React.FC = () => {
                   <td className="p-2 border border-gray-200">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="w-full justify-between">
-                          {item.description}
-                          <ChevronDown className="h-4 w-4 ml-2" />
+                        <Button variant="ghost" className="w-full justify-between text-sm h-8">
+                          <span className="truncate">{item.description}</span>
+                          <ChevronDown className="h-4 w-4 ml-1 flex-shrink-0" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-56">
@@ -373,6 +398,7 @@ const OrderForm: React.FC = () => {
                           <DropdownMenuItem 
                             key={product.id} 
                             onClick={() => handleSelectProduct(index, product.id)}
+                            className="text-sm"
                           >
                             {product.name} - ${product.price.toFixed(2)}/{product.unit}
                           </DropdownMenuItem>
@@ -383,27 +409,26 @@ const OrderForm: React.FC = () => {
                               Other / Custom Item
                             </DropdownMenuItem>
                           </AlertDialogTrigger>
-                          <AlertDialogContent>
+                          <AlertDialogContent className="w-[95vw] max-w-md">
                             <AlertDialogHeader>
                               <AlertDialogTitle>Add Custom Item</AlertDialogTitle>
                               <AlertDialogDescription>
                                 Enter the details for your custom item.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label htmlFor="customName" className="text-right">
+                            <div className="grid gap-4 py-2">
+                              <div className="grid items-center gap-2">
+                                <label htmlFor="customName" className="text-sm font-medium">
                                   Name
                                 </label>
                                 <Input
                                   id="customName"
                                   value={customProduct.name}
                                   onChange={(e) => setCustomProduct(prev => ({ ...prev, name: e.target.value }))}
-                                  className="col-span-3"
                                 />
                               </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label htmlFor="customPrice" className="text-right">
+                              <div className="grid items-center gap-2">
+                                <label htmlFor="customPrice" className="text-sm font-medium">
                                   Price
                                 </label>
                                 <Input
@@ -413,7 +438,6 @@ const OrderForm: React.FC = () => {
                                   step="0.01"
                                   value={customProduct.price}
                                   onChange={(e) => setCustomProduct(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
-                                  className="col-span-3"
                                 />
                               </div>
                             </div>
@@ -429,12 +453,6 @@ const OrderForm: React.FC = () => {
                     </DropdownMenu>
                     
                     {/* Notes for the item */}
-                    {item.notes && (
-                      <div className="text-xs text-gray-500 mt-1">
-                        Note: {item.notes}
-                      </div>
-                    )}
-                    {/* Add notes field */}
                     <Input
                       placeholder="Add notes (optional)"
                       value={item.notes}
@@ -461,20 +479,20 @@ const OrderForm: React.FC = () => {
                       step="0.1"
                       value={item.quantity}
                       onChange={(e) => handleQuantityChange(index, parseFloat(e.target.value))}
-                      className="w-full"
+                      className="w-full h-8 text-sm p-1"
                     />
                   </td>
-                  <td className="p-2 border border-gray-200">
+                  <td className="p-2 border border-gray-200 text-sm">
                     ${item.unitPrice.toFixed(2)}
                   </td>
-                  <td className="p-2 border border-gray-200 font-medium">
+                  <td className="p-2 border border-gray-200 font-medium text-sm">
                     ${item.total.toFixed(2)}
                   </td>
                   <td className="p-2 border border-gray-200 text-center">
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="h-8 w-8 p-0 text-destructive"
+                      className="h-6 w-6 p-0 text-destructive"
                       onClick={() => handleRemoveRow(index)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -509,13 +527,14 @@ const OrderForm: React.FC = () => {
           onClick={addNewRow}
           className="mt-4"
           variant="outline"
+          size="sm"
         >
           <Plus className="mr-2 h-4 w-4" />
           Add Item
         </Button>
         
         {/* Special Instructions */}
-        <div className="mt-6">
+        <div className="mt-4">
           <label htmlFor="specialInstructions" className="text-sm font-medium block mb-2">
             Special Instructions
           </label>
@@ -524,19 +543,19 @@ const OrderForm: React.FC = () => {
             placeholder="Add any special instructions for this order..."
             value={specialInstructions}
             onChange={(e) => setSpecialInstructions(e.target.value)}
-            className="resize-none h-24"
+            className="resize-none h-20"
           />
         </div>
         
         {/* Submit Button */}
-        <div className="mt-6 flex justify-end">
+        <div className="mt-4 flex justify-end">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button size="lg" disabled={isSubmitting || orderItems.length === 0}>
+              <Button className="w-full sm:w-auto" disabled={isSubmitting || orderItems.length === 0}>
                 {isSubmitting ? "Submitting..." : "Submit Order"}
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="w-[95vw] max-w-md">
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirm Order Submission</AlertDialogTitle>
                 <AlertDialogDescription>

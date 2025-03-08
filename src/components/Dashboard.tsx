@@ -17,8 +17,17 @@ import {
   ShoppingBag, 
   BarChart2, 
   History,
-  Download
+  Download,
+  Menu
 } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -28,76 +37,132 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen flex flex-col animate-fade-in">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto px-3 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-2">
             <img 
               src="/lovable-uploads/4fc43751-b8dd-4328-872a-45392c5523f0.png" 
               alt="How Kee Frozen Foods Logo" 
-              className="h-10 w-10"
+              className="h-8 w-8 sm:h-10 sm:w-10"
             />
             <div>
-              <h1 className="text-xl font-medium text-[#ea384c]">How Kee Frozen Foods</h1>
-              <p className="text-xs text-muted-foreground">Sdn Bhd</p>
+              <h1 className="text-lg sm:text-xl font-medium text-[#ea384c]">How Kee Frozen Foods</h1>
+              <p className="text-xs text-muted-foreground hidden sm:block">Sdn Bhd</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-secondary px-3 py-1.5 rounded-full text-sm">
-              <Avatar className="h-6 w-6 bg-[#ea384c]/10">
-                <AvatarFallback className="text-[#ea384c]">{user?.name.charAt(0)}</AvatarFallback>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-secondary px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm">
+              <Avatar className="h-5 w-5 sm:h-6 sm:w-6 bg-[#ea384c]/10">
+                <AvatarFallback className="text-[#ea384c] text-xs">{user?.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <span className="font-medium">{user?.name}</span>
+              <span className="font-medium hidden sm:inline">{user?.name}</span>
             </div>
-            <Button variant="ghost" size="icon" onClick={logout}>
-              <LogOut className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={logout} className="h-8 w-8 sm:h-9 sm:w-9">
+              <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
           </div>
         </div>
       </header>
       
       {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 py-6">
-        <Tabs defaultValue="newOrder" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 mb-6 bg-secondary/50 p-1 rounded-lg">
-            <TabsTrigger value="newOrder" className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              <span>New Order</span>
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
-              <History className="h-4 w-4" />
-              <span>Order History</span>
-            </TabsTrigger>
-            <TabsTrigger value="report" className="flex items-center gap-2">
-              <BarChart2 className="h-4 w-4" />
-              <span>Monthly Report</span>
-            </TabsTrigger>
-            <TabsTrigger value="downloads" className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              <span>Downloads</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="newOrder" className="animate-fade-in">
-            <OrderForm />
-          </TabsContent>
-          
-          <TabsContent value="history" className="animate-fade-in">
-            <OrderHistory />
-          </TabsContent>
-          
-          <TabsContent value="report" className="animate-fade-in">
-            <MonthlyReport />
-          </TabsContent>
-          
-          <TabsContent value="downloads" className="animate-fade-in">
-            <DownloadCenter />
-          </TabsContent>
-        </Tabs>
+      <main className="flex-grow container mx-auto px-3 py-4 sm:px-4 sm:py-6">
+        {/* Mobile View: Sheet for navigation */}
+        <div className="block sm:hidden mb-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-medium">
+              {activeTab === "newOrder" && "New Order"}
+              {activeTab === "history" && "Order History"}
+              {activeTab === "report" && "Monthly Report"}
+              {activeTab === "downloads" && "Downloads"}
+            </h2>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64">
+                <SheetHeader>
+                  <SheetTitle>Navigation</SheetTitle>
+                  <SheetDescription>
+                    Choose a section to navigate to
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="py-4 flex flex-col gap-1">
+                  <Button 
+                    variant={activeTab === "newOrder" ? "default" : "ghost"} 
+                    className="justify-start"
+                    onClick={() => setActiveTab("newOrder")}
+                  >
+                    <Package className="h-4 w-4 mr-2" />
+                    New Order
+                  </Button>
+                  <Button 
+                    variant={activeTab === "history" ? "default" : "ghost"} 
+                    className="justify-start"
+                    onClick={() => setActiveTab("history")}
+                  >
+                    <History className="h-4 w-4 mr-2" />
+                    Order History
+                  </Button>
+                  <Button 
+                    variant={activeTab === "report" ? "default" : "ghost"} 
+                    className="justify-start"
+                    onClick={() => setActiveTab("report")}
+                  >
+                    <BarChart2 className="h-4 w-4 mr-2" />
+                    Monthly Report
+                  </Button>
+                  <Button 
+                    variant={activeTab === "downloads" ? "default" : "ghost"} 
+                    className="justify-start"
+                    onClick={() => setActiveTab("downloads")}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Downloads
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+        
+        {/* Desktop View: Tabs */}
+        <div className="hidden sm:block">
+          <Tabs defaultValue="newOrder" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-4 mb-6 bg-secondary/50 p-1 rounded-lg">
+              <TabsTrigger value="newOrder" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                <span>New Order</span>
+              </TabsTrigger>
+              <TabsTrigger value="history" className="flex items-center gap-2">
+                <History className="h-4 w-4" />
+                <span>Order History</span>
+              </TabsTrigger>
+              <TabsTrigger value="report" className="flex items-center gap-2">
+                <BarChart2 className="h-4 w-4" />
+                <span>Monthly Report</span>
+              </TabsTrigger>
+              <TabsTrigger value="downloads" className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                <span>Downloads</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+        
+        {/* Content based on active tab */}
+        <div className="animate-fade-in">
+          {activeTab === "newOrder" && <OrderForm />}
+          {activeTab === "history" && <OrderHistory />}
+          {activeTab === "report" && <MonthlyReport />}
+          {activeTab === "downloads" && <DownloadCenter />}
+        </div>
       </main>
       
       {/* Footer */}
-      <footer className="border-t py-4 bg-white/80 backdrop-blur-md mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t py-3 bg-white/80 backdrop-blur-md mt-auto">
+        <div className="container mx-auto px-4 text-center text-xs sm:text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} How Kee Frozen Foods Sdn Bhd - Seafood Wholesale Management System
         </div>
       </footer>
