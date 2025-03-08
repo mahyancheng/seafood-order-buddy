@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { CalendarIcon, Plus, Trash2, ChevronDown } from "lucide-react";
@@ -368,127 +369,22 @@ const OrderForm: React.FC = () => {
       <Separator />
       
       <CardContent className="p-3 sm:p-6">
-        {/* Order Items Table */}
-        <div className="overflow-x-auto -mx-3 sm:mx-0">
-          <table className="w-full border-collapse min-w-[500px]">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-2 text-left border border-gray-200 w-10 sm:w-16">No.</th>
-                <th className="p-2 text-left border border-gray-200">Description</th>
-                <th className="p-2 text-left border border-gray-200 w-16 sm:w-24">Qty</th>
-                <th className="p-2 text-left border border-gray-200 w-20 sm:w-32">Unit Price</th>
-                <th className="p-2 text-left border border-gray-200 w-20 sm:w-32">Total</th>
-                <th className="p-2 text-center border border-gray-200 w-10 sm:w-16"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderItems.map((item, index) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="p-2 border border-gray-200 text-center">{index + 1}</td>
-                  <td className="p-2 border border-gray-200">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="w-full justify-between text-sm h-8">
-                          <span className="truncate">{item.description}</span>
-                          <ChevronDown className="h-4 w-4 ml-1 flex-shrink-0" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56">
-                        {products.map(product => (
-                          <DropdownMenuItem 
-                            key={product.id} 
-                            onClick={() => handleSelectProduct(index, product.id)}
-                            className="text-sm"
-                          >
-                            {product.name} - ${product.price.toFixed(2)}/{product.unit}
-                          </DropdownMenuItem>
-                        ))}
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                              Other / Custom Item
-                            </DropdownMenuItem>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className="w-[95vw] max-w-md">
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Add Custom Item</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Enter the details for your custom item.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <div className="grid gap-4 py-2">
-                              <div className="grid items-center gap-2">
-                                <label htmlFor="customName" className="text-sm font-medium">
-                                  Name
-                                </label>
-                                <Input
-                                  id="customName"
-                                  value={customProduct.name}
-                                  onChange={(e) => setCustomProduct(prev => ({ ...prev, name: e.target.value }))}
-                                />
-                              </div>
-                              <div className="grid items-center gap-2">
-                                <label htmlFor="customPrice" className="text-sm font-medium">
-                                  Price
-                                </label>
-                                <Input
-                                  id="customPrice"
-                                  type="number"
-                                  min="0.01"
-                                  step="0.01"
-                                  value={customProduct.price}
-                                  onChange={(e) => setCustomProduct(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
-                                />
-                              </div>
-                            </div>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleAddCustomProduct(index)}>
-                                Add Item
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    
-                    {/* Notes for the item */}
-                    <Input
-                      placeholder="Add notes (optional)"
-                      value={item.notes}
-                      onChange={(e) => {
-                        const updatedItems = [...orderItems];
-                        updatedItems[index].notes = e.target.value;
-                        setOrderItems(updatedItems);
-                        
-                        // Update notes in cart
-                        if (item.productId) {
-                          const currentItem = cart.find(cartItem => cartItem.productId === item.productId);
-                          if (currentItem) {
-                            addProductToCart(item.productId, currentItem.quantity, e.target.value);
-                          }
-                        }
-                      }}
-                      className="mt-1 text-xs h-7"
-                    />
-                  </td>
-                  <td className="p-2 border border-gray-200">
-                    <Input
-                      type="number"
-                      min="0.1"
-                      step="0.1"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, parseFloat(e.target.value))}
-                      className="w-full h-8 text-sm p-1"
-                    />
-                  </td>
-                  <td className="p-2 border border-gray-200 text-sm">
-                    ${item.unitPrice.toFixed(2)}
-                  </td>
-                  <td className="p-2 border border-gray-200 font-medium text-sm">
-                    ${item.total.toFixed(2)}
-                  </td>
-                  <td className="p-2 border border-gray-200 text-center">
+        {/* Order Items Table - Mobile Optimized View */}
+        <div className="mb-4">
+          <h3 className="font-medium text-sm mb-2">Order Items</h3>
+          
+          {/* Mobile view: Cards instead of table for small screens */}
+          <div className="block md:hidden space-y-3">
+            {orderItems.length > 0 ? (
+              orderItems.map((item, index) => (
+                <Card key={item.id} className="overflow-hidden">
+                  <div className="bg-gray-100 p-2 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <span className="font-medium text-xs bg-primary text-primary-foreground rounded-full h-5 w-5 flex items-center justify-center mr-2">
+                        {index + 1}
+                      </span>
+                      <h4 className="font-medium truncate max-w-[150px]">{item.description}</h4>
+                    </div>
                     <Button 
                       variant="ghost" 
                       size="sm" 
@@ -497,35 +393,300 @@ const OrderForm: React.FC = () => {
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                  </td>
+                  </div>
+                  <div className="p-3 space-y-2">
+                    <div>
+                      <label className="text-xs text-muted-foreground block mb-1">Item</label>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" className="w-full justify-between text-sm h-8">
+                            <span className="truncate">{item.description}</span>
+                            <ChevronDown className="h-4 w-4 ml-1 flex-shrink-0" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56">
+                          {products.map(product => (
+                            <DropdownMenuItem 
+                              key={product.id} 
+                              onClick={() => handleSelectProduct(index, product.id)}
+                              className="text-sm"
+                            >
+                              {product.name} - ${product.price.toFixed(2)}/{product.unit}
+                            </DropdownMenuItem>
+                          ))}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                Other / Custom Item
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="w-[95vw] max-w-md">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Add Custom Item</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Enter the details for your custom item.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <div className="grid gap-4 py-2">
+                                <div className="grid items-center gap-2">
+                                  <label htmlFor="customName" className="text-sm font-medium">
+                                    Name
+                                  </label>
+                                  <Input
+                                    id="customName"
+                                    value={customProduct.name}
+                                    onChange={(e) => setCustomProduct(prev => ({ ...prev, name: e.target.value }))}
+                                  />
+                                </div>
+                                <div className="grid items-center gap-2">
+                                  <label htmlFor="customPrice" className="text-sm font-medium">
+                                    Price
+                                  </label>
+                                  <Input
+                                    id="customPrice"
+                                    type="number"
+                                    min="0.01"
+                                    step="0.01"
+                                    value={customProduct.price}
+                                    onChange={(e) => setCustomProduct(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
+                                  />
+                                </div>
+                              </div>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleAddCustomProduct(index)}>
+                                  Add Item
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-xs text-muted-foreground block mb-1">Quantity</label>
+                        <Input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={item.quantity}
+                          onChange={(e) => handleQuantityChange(index, parseFloat(e.target.value))}
+                          className="w-full h-8 text-sm p-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-muted-foreground block mb-1">Unit Price</label>
+                        <div className="h-8 flex items-center border px-2 rounded-md bg-muted/30 text-sm">
+                          ${item.unitPrice.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="text-xs text-muted-foreground block mb-1">Notes</label>
+                      <Input
+                        placeholder="Add notes (optional)"
+                        value={item.notes}
+                        onChange={(e) => {
+                          const updatedItems = [...orderItems];
+                          updatedItems[index].notes = e.target.value;
+                          setOrderItems(updatedItems);
+                          
+                          // Update notes in cart
+                          if (item.productId) {
+                            const currentItem = cart.find(cartItem => cartItem.productId === item.productId);
+                            if (currentItem) {
+                              addProductToCart(item.productId, currentItem.quantity, e.target.value);
+                            }
+                          }
+                        }}
+                        className="text-xs h-7"
+                      />
+                    </div>
+                    
+                    <div className="pt-1 border-t flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Total:</span>
+                      <span className="font-bold text-sm">${item.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <div className="p-4 text-center text-muted-foreground bg-muted/20 rounded-md">
+                No items added. Tap "Add Item" to begin your order.
+              </div>
+            )}
+          </div>
+          
+          {/* Desktop view: Traditional table for larger screens */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="p-2 text-left border border-gray-200 w-10 sm:w-16">No.</th>
+                  <th className="p-2 text-left border border-gray-200">Description</th>
+                  <th className="p-2 text-left border border-gray-200 w-16 sm:w-24">Qty</th>
+                  <th className="p-2 text-left border border-gray-200 w-20 sm:w-32">Unit Price</th>
+                  <th className="p-2 text-left border border-gray-200 w-20 sm:w-32">Total</th>
+                  <th className="p-2 text-center border border-gray-200 w-10 sm:w-16"></th>
                 </tr>
-              ))}
-              {/* Empty state row */}
-              {orderItems.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="p-4 text-center text-muted-foreground">
-                    No items added. Click "Add Item" to begin your order.
+              </thead>
+              <tbody>
+                {orderItems.map((item, index) => (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="p-2 border border-gray-200 text-center">{index + 1}</td>
+                    <td className="p-2 border border-gray-200">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="w-full justify-between text-sm h-8">
+                            <span className="truncate">{item.description}</span>
+                            <ChevronDown className="h-4 w-4 ml-1 flex-shrink-0" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56">
+                          {products.map(product => (
+                            <DropdownMenuItem 
+                              key={product.id} 
+                              onClick={() => handleSelectProduct(index, product.id)}
+                              className="text-sm"
+                            >
+                              {product.name} - ${product.price.toFixed(2)}/{product.unit}
+                            </DropdownMenuItem>
+                          ))}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                Other / Custom Item
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="w-[95vw] max-w-md">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Add Custom Item</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Enter the details for your custom item.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <div className="grid gap-4 py-2">
+                                <div className="grid items-center gap-2">
+                                  <label htmlFor="customName" className="text-sm font-medium">
+                                    Name
+                                  </label>
+                                  <Input
+                                    id="customName"
+                                    value={customProduct.name}
+                                    onChange={(e) => setCustomProduct(prev => ({ ...prev, name: e.target.value }))}
+                                  />
+                                </div>
+                                <div className="grid items-center gap-2">
+                                  <label htmlFor="customPrice" className="text-sm font-medium">
+                                    Price
+                                  </label>
+                                  <Input
+                                    id="customPrice"
+                                    type="number"
+                                    min="0.01"
+                                    step="0.01"
+                                    value={customProduct.price}
+                                    onChange={(e) => setCustomProduct(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
+                                  />
+                                </div>
+                              </div>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleAddCustomProduct(index)}>
+                                  Add Item
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      
+                      {/* Notes for the item */}
+                      <Input
+                        placeholder="Add notes (optional)"
+                        value={item.notes}
+                        onChange={(e) => {
+                          const updatedItems = [...orderItems];
+                          updatedItems[index].notes = e.target.value;
+                          setOrderItems(updatedItems);
+                          
+                          // Update notes in cart
+                          if (item.productId) {
+                            const currentItem = cart.find(cartItem => cartItem.productId === item.productId);
+                            if (currentItem) {
+                              addProductToCart(item.productId, currentItem.quantity, e.target.value);
+                            }
+                          }
+                        }}
+                        className="mt-1 text-xs h-7"
+                      />
+                    </td>
+                    <td className="p-2 border border-gray-200">
+                      <Input
+                        type="number"
+                        min="0.1"
+                        step="0.1"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(index, parseFloat(e.target.value))}
+                        className="w-full h-8 text-sm p-1"
+                      />
+                    </td>
+                    <td className="p-2 border border-gray-200 text-sm">
+                      ${item.unitPrice.toFixed(2)}
+                    </td>
+                    <td className="p-2 border border-gray-200 font-medium text-sm">
+                      ${item.total.toFixed(2)}
+                    </td>
+                    <td className="p-2 border border-gray-200 text-center">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 w-6 p-0 text-destructive"
+                        onClick={() => handleRemoveRow(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {/* Empty state row */}
+                {orderItems.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="p-4 text-center text-muted-foreground">
+                      No items added. Click "Add Item" to begin your order.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+              <tfoot>
+                <tr className="bg-gray-50">
+                  <td colSpan={4} className="p-2 text-right border border-gray-200 font-medium">
+                    Total:
                   </td>
+                  <td className="p-2 border border-gray-200 font-bold">
+                    ${getCartTotal().toFixed(2)}
+                  </td>
+                  <td className="p-2 border border-gray-200"></td>
                 </tr>
-              )}
-            </tbody>
-            <tfoot>
-              <tr className="bg-gray-50">
-                <td colSpan={4} className="p-2 text-right border border-gray-200 font-medium">
-                  Total:
-                </td>
-                <td className="p-2 border border-gray-200 font-bold">
-                  ${getCartTotal().toFixed(2)}
-                </td>
-                <td className="p-2 border border-gray-200"></td>
-              </tr>
-            </tfoot>
-          </table>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        
+        {/* Total for mobile view */}
+        <div className="md:hidden bg-gray-100 p-3 rounded-md mb-4">
+          <div className="flex justify-between items-center">
+            <span className="font-medium">Order Total:</span>
+            <span className="text-xl font-bold">${getCartTotal().toFixed(2)}</span>
+          </div>
         </div>
         
         <Button 
           onClick={addNewRow}
-          className="mt-4"
+          className="mt-2 mb-4 w-full md:w-auto"
           variant="outline"
           size="sm"
         >
@@ -548,10 +709,10 @@ const OrderForm: React.FC = () => {
         </div>
         
         {/* Submit Button */}
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button className="w-full sm:w-auto" disabled={isSubmitting || orderItems.length === 0}>
+              <Button className="w-full" disabled={isSubmitting || orderItems.length === 0}>
                 {isSubmitting ? "Submitting..." : "Submit Order"}
               </Button>
             </AlertDialogTrigger>

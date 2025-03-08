@@ -34,10 +34,10 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("newOrder");
   
   return (
-    <div className="min-h-screen flex flex-col animate-fade-in">
+    <div className="min-h-screen flex flex-col animate-fade-in bg-gray-50">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-10">
-        <div className="container mx-auto px-3 py-3 flex justify-between items-center">
+      <header className="border-b bg-white shadow-sm sticky top-0 z-10">
+        <div className="container mx-auto px-3 py-2 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <img 
               src="/lovable-uploads/4fc43751-b8dd-4328-872a-45392c5523f0.png" 
@@ -65,7 +65,7 @@ const Dashboard: React.FC = () => {
       </header>
       
       {/* Main Content */}
-      <main className="flex-grow container mx-auto px-3 py-4 sm:px-4 sm:py-6">
+      <main className="flex-grow container mx-auto px-2 py-3 sm:px-4 sm:py-6">
         {/* Mobile View: Sheet for navigation */}
         <div className="block sm:hidden mb-4">
           <div className="flex items-center justify-between">
@@ -81,18 +81,30 @@ const Dashboard: React.FC = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-64">
-                <SheetHeader>
-                  <SheetTitle>Navigation</SheetTitle>
-                  <SheetDescription>
-                    Choose a section to navigate to
-                  </SheetDescription>
+              <SheetContent side="left" className="w-[85%] max-w-xs">
+                <SheetHeader className="mb-4">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src="/lovable-uploads/4fc43751-b8dd-4328-872a-45392c5523f0.png" 
+                      alt="How Kee Logo" 
+                      className="h-10 w-10"
+                    />
+                    <div>
+                      <SheetTitle className="text-[#ea384c]">How Kee Frozen Foods</SheetTitle>
+                      <SheetDescription>
+                        Seafood Wholesale Management
+                      </SheetDescription>
+                    </div>
+                  </div>
                 </SheetHeader>
-                <div className="py-4 flex flex-col gap-1">
+                <div className="py-2 flex flex-col gap-1">
                   <Button 
                     variant={activeTab === "newOrder" ? "default" : "ghost"} 
                     className="justify-start"
-                    onClick={() => setActiveTab("newOrder")}
+                    onClick={() => {
+                      setActiveTab("newOrder");
+                      document.querySelector('[data-sheet-close="true"]')?.click();
+                    }}
                   >
                     <Package className="h-4 w-4 mr-2" />
                     New Order
@@ -100,7 +112,10 @@ const Dashboard: React.FC = () => {
                   <Button 
                     variant={activeTab === "history" ? "default" : "ghost"} 
                     className="justify-start"
-                    onClick={() => setActiveTab("history")}
+                    onClick={() => {
+                      setActiveTab("history");
+                      document.querySelector('[data-sheet-close="true"]')?.click();
+                    }}
                   >
                     <History className="h-4 w-4 mr-2" />
                     Order History
@@ -108,7 +123,10 @@ const Dashboard: React.FC = () => {
                   <Button 
                     variant={activeTab === "report" ? "default" : "ghost"} 
                     className="justify-start"
-                    onClick={() => setActiveTab("report")}
+                    onClick={() => {
+                      setActiveTab("report");
+                      document.querySelector('[data-sheet-close="true"]')?.click();
+                    }}
                   >
                     <BarChart2 className="h-4 w-4 mr-2" />
                     Monthly Report
@@ -116,10 +134,28 @@ const Dashboard: React.FC = () => {
                   <Button 
                     variant={activeTab === "downloads" ? "default" : "ghost"} 
                     className="justify-start"
-                    onClick={() => setActiveTab("downloads")}
+                    onClick={() => {
+                      setActiveTab("downloads");
+                      document.querySelector('[data-sheet-close="true"]')?.click();
+                    }}
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Downloads
+                  </Button>
+                </div>
+                
+                <div className="mt-auto pt-4 border-t flex items-center">
+                  <Avatar className="h-9 w-9 mr-2">
+                    <AvatarFallback className="bg-[#ea384c]/10 text-[#ea384c]">
+                      {user?.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{user?.name}</p>
+                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={logout}>
+                    <LogOut className="h-4 w-4" />
                   </Button>
                 </div>
               </SheetContent>
@@ -161,8 +197,8 @@ const Dashboard: React.FC = () => {
       </main>
       
       {/* Footer */}
-      <footer className="border-t py-3 bg-white/80 backdrop-blur-md mt-auto">
-        <div className="container mx-auto px-4 text-center text-xs sm:text-sm text-muted-foreground">
+      <footer className="border-t py-3 bg-white mt-auto text-center">
+        <div className="container mx-auto px-4 text-xs sm:text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} How Kee Frozen Foods Sdn Bhd - Seafood Wholesale Management System
         </div>
       </footer>
