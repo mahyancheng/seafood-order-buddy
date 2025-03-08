@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useOrder } from "@/context/OrderContext";
 import OrderForm from "./OrderForm";
-import OrderSummary from "./OrderSummary";
 import OrderHistory from "./OrderHistory";
 import MonthlyReport from "./MonthlyReport";
 import DownloadCenter from "./DownloadCenter";
@@ -79,14 +78,7 @@ const Dashboard: React.FC = () => {
           </TabsList>
           
           <TabsContent value="newOrder" className="animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-              <div className="lg:col-span-4">
-                <OrderForm />
-              </div>
-              <div className="lg:col-span-3">
-                <OrderSummary />
-              </div>
-            </div>
+            <OrderForm />
           </TabsContent>
           
           <TabsContent value="history" className="animate-fade-in">
