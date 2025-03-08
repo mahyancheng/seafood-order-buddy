@@ -27,6 +27,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 
 const Dashboard: React.FC = () => {
@@ -98,50 +99,49 @@ const Dashboard: React.FC = () => {
                   </div>
                 </SheetHeader>
                 <div className="py-2 flex flex-col gap-1">
-                  <Button 
-                    variant={activeTab === "newOrder" ? "default" : "ghost"} 
-                    className="justify-start"
-                    onClick={() => {
-                      setActiveTab("newOrder");
-                      document.querySelector('[data-sheet-close="true"]')?.click();
-                    }}
-                  >
-                    <Package className="h-4 w-4 mr-2" />
-                    New Order
-                  </Button>
-                  <Button 
-                    variant={activeTab === "history" ? "default" : "ghost"} 
-                    className="justify-start"
-                    onClick={() => {
-                      setActiveTab("history");
-                      document.querySelector('[data-sheet-close="true"]')?.click();
-                    }}
-                  >
-                    <History className="h-4 w-4 mr-2" />
-                    Order History
-                  </Button>
-                  <Button 
-                    variant={activeTab === "report" ? "default" : "ghost"} 
-                    className="justify-start"
-                    onClick={() => {
-                      setActiveTab("report");
-                      document.querySelector('[data-sheet-close="true"]')?.click();
-                    }}
-                  >
-                    <BarChart2 className="h-4 w-4 mr-2" />
-                    Monthly Report
-                  </Button>
-                  <Button 
-                    variant={activeTab === "downloads" ? "default" : "ghost"} 
-                    className="justify-start"
-                    onClick={() => {
-                      setActiveTab("downloads");
-                      document.querySelector('[data-sheet-close="true"]')?.click();
-                    }}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Downloads
-                  </Button>
+                  <SheetClose asChild>
+                    <Button 
+                      variant={activeTab === "newOrder" ? "default" : "ghost"} 
+                      className="justify-start"
+                      onClick={() => setActiveTab("newOrder")}
+                    >
+                      <Package className="h-4 w-4 mr-2" />
+                      New Order
+                    </Button>
+                  </SheetClose>
+                  
+                  <SheetClose asChild>
+                    <Button 
+                      variant={activeTab === "history" ? "default" : "ghost"} 
+                      className="justify-start"
+                      onClick={() => setActiveTab("history")}
+                    >
+                      <History className="h-4 w-4 mr-2" />
+                      Order History
+                    </Button>
+                  </SheetClose>
+                  
+                  <SheetClose asChild>
+                    <Button 
+                      variant={activeTab === "report" ? "default" : "ghost"} 
+                      className="justify-start"
+                      onClick={() => setActiveTab("report")}
+                    >
+                      <BarChart2 className="h-4 w-4 mr-2" />
+                      Monthly Report
+                    </Button>
+                  </SheetClose>
+                  
+                  <SheetClose asChild>
+                    <Button 
+                      variant={activeTab === "downloads" ? "default" : "ghost"} 
+                      className="justify-start"
+                      onClick={() => setActiveTab("downloads")}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Downloads
+                    </Button>
+                  </SheetClose>
                 </div>
                 
                 <div className="mt-auto pt-4 border-t flex items-center">
@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
                   </Avatar>
                   <div className="flex-1">
                     <p className="text-sm font-medium">{user?.name}</p>
-                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                    <p className="text-xs text-muted-foreground">{user?.email || ''}</p>
                   </div>
                   <Button variant="ghost" size="icon" onClick={logout}>
                     <LogOut className="h-4 w-4" />
