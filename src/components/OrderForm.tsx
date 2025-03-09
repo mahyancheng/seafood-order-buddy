@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useOrder } from "@/context/OrderContext";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -642,112 +643,112 @@ const OrderForm: React.FC = () => {
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
                               </AlertDialog>
-                            </DropdownMenu>
-                          ) : (
-                            <div className="w-full truncate" title={item.description}>
-                              {item.description}
-                              {item.notes && (
-                                <div className="text-xs text-muted-foreground truncate mt-1" title={item.notes}>
-                                  Note: {item.notes}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="col-span-2 text-center">
-                          {editingItemIndex === index ? (
-                            <Input
-                              type="number"
-                              min="0.1"
-                              step="0.1"
-                              value={item.quantity}
-                              onChange={(e) => handleQuantityChange(index, parseFloat(e.target.value))}
-                              className="w-full h-8 text-sm p-1 text-center"
-                            />
-                          ) : (
-                            <div>{item.quantity}</div>
-                          )}
-                        </div>
-                        
-                        <div className="col-span-2 text-center hidden sm:block">
-                          {editingItemIndex === index ? (
-                            <div className="text-center">{products.find(p => p.id === item.productId)?.unit || 'unit'}</div>
-                          ) : (
-                            <div>{products.find(p => p.id === item.productId)?.unit || 'unit'}</div>
-                          )}
-                        </div>
-                        
-                        <div className="col-span-2 sm:col-span-1 text-center font-medium">
-                          ${item.unitPrice.toFixed(2)}
-                        </div>
-                        
-                        <div className="col-span-3 sm:col-span-1 flex justify-end gap-1">
-                          {editingItemIndex === index ? (
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={cancelEditing}>
-                              <X className="h-4 w-4" />
-                            </Button>
-                          ) : (
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => startEditingItem(index)}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          )}
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-7 w-7 p-0 text-destructive"
-                            onClick={() => handleRemoveRow(index)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        
-                        {/* Notes input when editing */}
-                        {editingItemIndex === index && (
-                          <div className="col-span-12 mt-2">
-                            <Label htmlFor={`note-${index}`} className="text-xs mb-1 block">
-                              Notes
-                            </Label>
-                            <Input
-                              id={`note-${index}`}
-                              placeholder="Add notes (optional)"
-                              value={item.notes}
-                              onChange={(e) => {
-                                const updatedItems = [...orderItems];
-                                updatedItems[index].notes = e.target.value;
-                                setOrderItems(updatedItems);
-                                
-                                // Update notes in cart
-                                if (item.productId) {
-                                  const currentItem = cart.find(cartItem => cartItem.productId === item.productId);
-                                  if (currentItem) {
-                                    addProductToCart(item.productId, currentItem.quantity, e.target.value);
-                                  }
-                                }
-                              }}
-                              className="text-xs h-7"
-                            />
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        ) : (
+                          <div className="w-full truncate" title={item.description}>
+                            {item.description}
+                            {item.notes && (
+                              <div className="text-xs text-muted-foreground truncate mt-1" title={item.notes}>
+                                Note: {item.notes}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-muted-foreground">
-                      No items added yet. Click "Add Item" to begin your order.
+                      
+                      <div className="col-span-2 text-center">
+                        {editingItemIndex === index ? (
+                          <Input
+                            type="number"
+                            min="0.1"
+                            step="0.1"
+                            value={item.quantity}
+                            onChange={(e) => handleQuantityChange(index, parseFloat(e.target.value))}
+                            className="w-full h-8 text-sm p-1 text-center"
+                          />
+                        ) : (
+                          <div>{item.quantity}</div>
+                        )}
+                      </div>
+                      
+                      <div className="col-span-2 text-center hidden sm:block">
+                        {editingItemIndex === index ? (
+                          <div className="text-center">{products.find(p => p.id === item.productId)?.unit || 'unit'}</div>
+                        ) : (
+                          <div>{products.find(p => p.id === item.productId)?.unit || 'unit'}</div>
+                        )}
+                      </div>
+                      
+                      <div className="col-span-2 sm:col-span-1 text-center font-medium">
+                        ${item.unitPrice.toFixed(2)}
+                      </div>
+                      
+                      <div className="col-span-3 sm:col-span-1 flex justify-end gap-1">
+                        {editingItemIndex === index ? (
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={cancelEditing}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => startEditingItem(index)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-destructive"
+                          onClick={() => handleRemoveRow(index)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      {/* Notes input when editing */}
+                      {editingItemIndex === index && (
+                        <div className="col-span-12 mt-2">
+                          <Label htmlFor={`note-${index}`} className="text-xs mb-1 block">
+                            Notes
+                          </Label>
+                          <Input
+                            id={`note-${index}`}
+                            placeholder="Add notes (optional)"
+                            value={item.notes}
+                            onChange={(e) => {
+                              const updatedItems = [...orderItems];
+                              updatedItems[index].notes = e.target.value;
+                              setOrderItems(updatedItems);
+                              
+                              // Update notes in cart
+                              if (item.productId) {
+                                const currentItem = cart.find(cartItem => cartItem.productId === item.productId);
+                                if (currentItem) {
+                                  addProductToCart(item.productId, currentItem.quantity, e.target.value);
+                                }
+                              }
+                            }}
+                            className="text-xs h-7"
+                          />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                
-                {/* Table Footer - Total */}
-                {orderItems.length > 0 && (
-                  <div className="bg-gray-100 p-3 border-t">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Order Total:</span>
-                      <span className="text-lg font-bold">${getCartTotal().toFixed(2)}</span>
-                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-muted-foreground">
+                    No items added yet. Click "Add Item" to begin your order.
                   </div>
                 )}
               </div>
+              
+              {/* Table Footer - Total */}
+              {orderItems.length > 0 && (
+                <div className="bg-gray-100 p-3 border-t">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Order Total:</span>
+                    <span className="text-lg font-bold">${getCartTotal().toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
             </div>
             
             {/* Special Instructions */}
@@ -789,19 +790,20 @@ const OrderForm: React.FC = () => {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-          </CardContent>
-        </Card>
-        
-        {/* Order Confirmation Dialog */}
-        {confirmedOrderData && (
-          <OrderConfirmationDialog
-            open={showOrderConfirmation}
-            onClose={handleCloseConfirmation}
-            orderData={confirmedOrderData}
-          />
-        )}
-      </>
-    );
-  };
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Order Confirmation Dialog */}
+      {confirmedOrderData && (
+        <OrderConfirmationDialog
+          open={showOrderConfirmation}
+          onClose={handleCloseConfirmation}
+          orderData={confirmedOrderData}
+        />
+      )}
+    </>
+  );
+};
 
-  export default OrderForm;
+export default OrderForm;
