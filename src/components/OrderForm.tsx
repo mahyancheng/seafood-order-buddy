@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useOrder } from "@/context/OrderContext";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -13,7 +12,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { CalendarIcon, Plus, Trash2, ChevronDown, Edit, X } from "lucide-react";
+import { CalendarIcon, Plus, Trash2, ChevronDown, Edit, X, User, Building, Phone, Mail, MapPin, Calendar as CalendarIconOutline } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
@@ -54,6 +53,9 @@ const OrderForm: React.FC = () => {
   const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   
+  // State for editing client info
+  const [isEditingClientInfo, setIsEditingClientInfo] = useState(false);
+  
   // Effect to sync cart with orderItems
   useEffect(() => {
     if (cart.length === 0 && orderItems.length === 0) return;
@@ -87,22 +89,6 @@ const OrderForm: React.FC = () => {
   }, [cart, products]);
   
   // Add a new blank row
-  const addNewRow = () => {
-    setOrderItems([
-      ...orderItems,
-      {
-        id: orderItems.length + 1,
-        productId: "",
-        description: "Click to select",
-        quantity: 1,
-        unitPrice: 0,
-        total: 0,
-        notes: "",
-      },
-    ]);
-  };
-  
-  // Handle selecting a product
   const handleSelectProduct = (index: number, productId: string) => {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -203,7 +189,7 @@ const OrderForm: React.FC = () => {
   };
   
   // Handle client info changes
-  const handleClientInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleClientInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setClientInfo(prev => ({
       ...prev,
@@ -221,6 +207,22 @@ const OrderForm: React.FC = () => {
   const cancelEditing = () => {
     setEditingItemIndex(null);
     setIsEditing(false);
+  };
+  
+  // Add new row function
+  const addNewRow = () => {
+    setOrderItems([
+      ...orderItems,
+      {
+        id: orderItems.length + 1,
+        productId: "",
+        description: "Click to select",
+        quantity: 1,
+        unitPrice: 0,
+        total: 0,
+        notes: "",
+      },
+    ]);
   };
   
   // Handle submit order
@@ -294,110 +296,215 @@ const OrderForm: React.FC = () => {
           <h3 className="font-bold text-xl w-full text-center">SALES ORDER</h3>
         </div>
         
-        {/* Client Information */}
-        <div className="grid grid-cols-1 gap-3 mt-4 border p-3 rounded-md bg-gray-50">
-          <div>
-            <label htmlFor="clientName" className="text-sm font-medium block mb-1">
-              Client Name <span className="text-red-500">*</span>
-            </label>
-            <Input
-              id="clientName"
-              name="name"
-              value={clientInfo.name}
-              onChange={handleClientInfoChange}
-              placeholder="Company or client name"
-              required
-            />
+        {/* Client Information - Updated to be similar to the order table */}
+        <div className="mt-4 border rounded-md overflow-hidden">
+          <div className="bg-gray-100 p-3 flex justify-between items-center">
+            <h3 className="font-medium text-sm">Client Information</h3>
+            <Button 
+              onClick={() => setIsEditingClientInfo(!isEditingClientInfo)} 
+              variant="outline" 
+              size="sm" 
+              className="h-8"
+            >
+              {isEditingClientInfo ? (
+                <>
+                  <X className="mr-1 h-3 w-3" />
+                  Cancel
+                </>
+              ) : (
+                <>
+                  <Edit className="mr-1 h-3 w-3" />
+                  Edit
+                </>
+              )}
+            </Button>
           </div>
           
-          <div>
-            <label htmlFor="address" className="text-sm font-medium block mb-1">
-              Address
-            </label>
-            <Textarea
-              id="address"
-              name="address"
-              value={clientInfo.address}
-              onChange={(e) => setClientInfo(prev => ({ ...prev, address: e.target.value }))}
-              placeholder="Delivery address"
-              className="resize-none h-16"
-            />
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="contactPerson" className="text-sm font-medium block mb-1">
-                Contact Person <span className="text-red-500">*</span>
-              </label>
-              <Input
-                id="contactPerson"
-                name="contactPerson"
-                value={clientInfo.contactPerson}
-                onChange={handleClientInfoChange}
-                placeholder="Contact person name"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="phone" className="text-sm font-medium block mb-1">
-                Phone <span className="text-red-500">*</span>
-              </label>
-              <Input
-                id="phone"
-                name="phone"
-                value={clientInfo.phone}
-                onChange={handleClientInfoChange}
-                placeholder="Contact phone number"
-                required
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="email" className="text-sm font-medium block mb-1">
-                Email
-              </label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={clientInfo.email}
-                onChange={handleClientInfoChange}
-                placeholder="Contact email"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="deliveryDate" className="text-sm font-medium block mb-1">
-                Delivery Date
-              </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !deliveryDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {deliveryDate ? format(deliveryDate, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={deliveryDate}
-                    onSelect={setDeliveryDate}
-                    initialFocus
-                    disabled={(date) => date < new Date()}
+          {isEditingClientInfo ? (
+            <div className="divide-y">
+              <div className="grid grid-cols-12 gap-2 p-3 items-center">
+                <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
+                  <Building className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Client Name <span className="text-red-500 ml-1">*</span>
+                </div>
+                <div className="col-span-12 sm:col-span-9">
+                  <Input
+                    name="name"
+                    value={clientInfo.name}
+                    onChange={handleClientInfoChange}
+                    placeholder="Company or client name"
+                    required
+                    className="h-9"
                   />
-                </PopoverContent>
-              </Popover>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 items-center">
+                <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
+                  <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Address
+                </div>
+                <div className="col-span-12 sm:col-span-9">
+                  <Textarea
+                    name="address"
+                    value={clientInfo.address}
+                    onChange={handleClientInfoChange}
+                    placeholder="Delivery address"
+                    className="resize-none h-16"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 items-center">
+                <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
+                  <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Contact Person <span className="text-red-500 ml-1">*</span>
+                </div>
+                <div className="col-span-12 sm:col-span-9">
+                  <Input
+                    name="contactPerson"
+                    value={clientInfo.contactPerson}
+                    onChange={handleClientInfoChange}
+                    placeholder="Contact person name"
+                    required
+                    className="h-9"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 items-center">
+                <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
+                  <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Phone <span className="text-red-500 ml-1">*</span>
+                </div>
+                <div className="col-span-12 sm:col-span-9">
+                  <Input
+                    name="phone"
+                    value={clientInfo.phone}
+                    onChange={handleClientInfoChange}
+                    placeholder="Contact phone number"
+                    required
+                    className="h-9"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 items-center">
+                <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
+                  <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Email
+                </div>
+                <div className="col-span-12 sm:col-span-9">
+                  <Input
+                    name="email"
+                    type="email"
+                    value={clientInfo.email}
+                    onChange={handleClientInfoChange}
+                    placeholder="Contact email"
+                    className="h-9"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 items-center">
+                <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
+                  <CalendarIconOutline className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Delivery Date
+                </div>
+                <div className="col-span-12 sm:col-span-9">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal h-9",
+                          !deliveryDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {deliveryDate ? format(deliveryDate, "PPP") : <span>Pick a date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={deliveryDate}
+                        onSelect={setDeliveryDate}
+                        initialFocus
+                        disabled={(date) => date < new Date()}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="divide-y">
+              <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
+                <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
+                  <Building className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Client
+                </div>
+                <div className="col-span-8 sm:col-span-9 text-sm">
+                  {clientInfo.name || <span className="text-muted-foreground italic">Not set</span>}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
+                <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
+                  <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Address
+                </div>
+                <div className="col-span-8 sm:col-span-9 text-sm">
+                  {clientInfo.address ? (
+                    <span className="whitespace-pre-line">{clientInfo.address}</span>
+                  ) : (
+                    <span className="text-muted-foreground italic">Not set</span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
+                <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
+                  <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Contact
+                </div>
+                <div className="col-span-8 sm:col-span-9 text-sm">
+                  {clientInfo.contactPerson || <span className="text-muted-foreground italic">Not set</span>}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
+                <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
+                  <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Phone
+                </div>
+                <div className="col-span-8 sm:col-span-9 text-sm">
+                  {clientInfo.phone || <span className="text-muted-foreground italic">Not set</span>}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
+                <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
+                  <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Email
+                </div>
+                <div className="col-span-8 sm:col-span-9 text-sm">
+                  {clientInfo.email || <span className="text-muted-foreground italic">Not set</span>}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
+                <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
+                  <CalendarIconOutline className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Delivery
+                </div>
+                <div className="col-span-8 sm:col-span-9 text-sm">
+                  {deliveryDate ? format(deliveryDate, "PPP") : <span className="text-muted-foreground italic">Not set</span>}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </CardHeader>
       
