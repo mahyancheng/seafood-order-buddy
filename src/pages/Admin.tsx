@@ -12,7 +12,7 @@ const AdminPage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-red-50 to-red-100">
-        <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-[#ea384c]/20 animate-fade-in">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-[#ea384c]/20 animate-fade-in max-w-[90%] sm:max-w-md">
           <img 
             src="/lovable-uploads/4fc43751-b8dd-4328-872a-45392c5523f0.png" 
             alt="How Kee Frozen Foods Logo" 

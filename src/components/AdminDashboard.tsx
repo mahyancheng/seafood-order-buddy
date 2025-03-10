@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useOrder } from "@/context/OrderContext";
@@ -18,7 +19,8 @@ import {
   LogOut, UserRound, Package, Settings, 
   Users, ShoppingBag, Truck, FileText, 
   Search, Filter, AlertTriangle, BarChart2,
-  ArrowUpRight, Layers, Calendar, Download
+  ArrowUpRight, Layers, Calendar, Download,
+  Menu, X
 } from "lucide-react";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -28,6 +30,7 @@ const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Count orders by status
   const orderCounts = {
@@ -137,12 +140,78 @@ const AdminDashboard: React.FC = () => {
     </div>
   );
 
+  // Mobile navigation menu
+  const MobileMenu = () => (
+    <div className={`fixed inset-0 bg-black/50 z-50 md:hidden transition-opacity duration-200 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-white shadow-xl p-4 transition-transform duration-300 ease-in-out transform" 
+        style={{ transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)' }}>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/4fc43751-b8dd-4328-872a-45392c5523f0.png" 
+              alt="Logo" 
+              className="h-10 w-10 mr-2"
+            />
+            <span className="font-bold text-lg text-primary">Admin Panel</span>
+          </div>
+          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+        
+        <div className="space-y-1 mb-6">
+          {[
+            { id: "overview", label: "Overview", icon: <BarChart2 className="h-4 w-4" /> },
+            { id: "orders", label: "Orders", icon: <ShoppingBag className="h-4 w-4" /> },
+            { id: "products", label: "Products", icon: <Package className="h-4 w-4" /> },
+            { id: "users", label: "Users", icon: <Users className="h-4 w-4" /> },
+            { id: "clients", label: "Clients", icon: <UserRound className="h-4 w-4" /> },
+            { id: "inventory", label: "Inventory", icon: <Layers className="h-4 w-4" /> },
+            { id: "downloads", label: "Downloads", icon: <Download className="h-4 w-4" /> },
+            { id: "settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              className={`flex items-center w-full px-4 py-2 text-sm rounded-md 
+                ${activeTab === tab.id ? 'bg-primary text-white' : 'hover:bg-secondary'}`}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setMobileMenuOpen(false);
+              }}
+            >
+              <span className="mr-3">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        
+        <div className="absolute bottom-4 left-4 right-4">
+          <Button variant="outline" className="w-full justify-start" onClick={logout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Log Out
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col animate-fade-in">
+      {/* Mobile Menu */}
+      <MobileMenu />
+      
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="md:hidden" 
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
             <div className="bg-primary/10 p-2 rounded-md">
               <ShoppingBag className="h-5 w-5 text-primary" />
             </div>
@@ -158,7 +227,7 @@ const AdminDashboard: React.FC = () => {
               <Avatar className="h-6 w-6">
                 <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <span className="font-medium">{user?.name}</span>
+              <span className="font-medium hidden sm:inline">{user?.name}</span>
             </div>
             <Button variant="ghost" size="icon" onClick={logout}>
               <LogOut className="h-5 w-5" />
@@ -170,7 +239,8 @@ const AdminDashboard: React.FC = () => {
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-8 w-full max-w-6xl mx-auto bg-secondary/50 p-1 rounded-lg">
+          {/* Desktop TabsList */}
+          <TabsList className="hidden md:grid grid-cols-8 w-full max-w-6xl mx-auto bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               <span>Overview</span>
@@ -205,18 +275,33 @@ const AdminDashboard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
           
+          {/* Mobile Tab indicator */}
+          <div className="md:hidden flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium flex items-center gap-2">
+              {activeTab === "overview" && <BarChart2 className="h-5 w-5" />}
+              {activeTab === "orders" && <ShoppingBag className="h-5 w-5" />}
+              {activeTab === "products" && <Package className="h-5 w-5" />}
+              {activeTab === "users" && <Users className="h-5 w-5" />}
+              {activeTab === "clients" && <UserRound className="h-5 w-5" />}
+              {activeTab === "inventory" && <Layers className="h-5 w-5" />}
+              {activeTab === "downloads" && <Download className="h-5 w-5" />}
+              {activeTab === "settings" && <Settings className="h-5 w-5" />}
+              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+            </h2>
+          </div>
+          
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6 animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-blue-700 flex items-center">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-blue-700 flex items-center">
                     <ShoppingBag className="h-4 w-4 mr-2" />
                     Total Orders
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-blue-800">{orderCounts.total}</div>
+                  <div className="text-lg sm:text-3xl font-bold text-blue-800">{orderCounts.total}</div>
                   <div className="flex items-center text-xs text-blue-600 mt-1">
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                     <span>12% from last month</span>
@@ -226,13 +311,13 @@ const AdminDashboard: React.FC = () => {
               
               <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-green-700 flex items-center">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-green-700 flex items-center">
                     <TrendingUp className="h-4 w-4 mr-2" />
                     Revenue
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-green-800">${totalRevenue.toFixed(2)}</div>
+                  <div className="text-lg sm:text-3xl font-bold text-green-800">${totalRevenue.toFixed(2)}</div>
                   <div className="flex items-center text-xs text-green-600 mt-1">
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                     <span>8% from last month</span>
@@ -242,13 +327,13 @@ const AdminDashboard: React.FC = () => {
               
               <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-purple-700 flex items-center">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-purple-700 flex items-center">
                     <Users className="h-4 w-4 mr-2" />
                     Active Clients
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-purple-800">18</div>
+                  <div className="text-lg sm:text-3xl font-bold text-purple-800">18</div>
                   <div className="flex items-center text-xs text-purple-600 mt-1">
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                     <span>5% from last month</span>
@@ -258,13 +343,13 @@ const AdminDashboard: React.FC = () => {
               
               <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-amber-700 flex items-center">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-amber-700 flex items-center">
                     <AlertTriangle className="h-4 w-4 mr-2" />
                     Pending Orders
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-amber-800">{orderCounts.submitted}</div>
+                  <div className="text-lg sm:text-3xl font-bold text-amber-800">{orderCounts.submitted}</div>
                   <div className="flex items-center text-xs text-amber-600 mt-1">
                     <span>Needs attention</span>
                   </div>
@@ -281,23 +366,25 @@ const AdminDashboard: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <RechartsBarChart
-                      data={monthlyData}
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="sales" fill="#3B82F6" />
-                    </RechartsBarChart>
-                  </ResponsiveContainer>
+                  <div className="h-[300px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsBarChart
+                        data={monthlyData}
+                        margin={{
+                          top: 5,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="sales" fill="#3B82F6" />
+                      </RechartsBarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </CardContent>
               </Card>
               
@@ -340,7 +427,7 @@ const AdminDashboard: React.FC = () => {
                           <div className="ml-auto text-sm font-medium">
                             {Math.round((product.quantity / totalSalesVolume) * 100)}%
                           </div>
-                          <div className="w-24 h-2 bg-secondary ml-4 rounded-full overflow-hidden">
+                          <div className="w-16 md:w-24 h-2 bg-secondary ml-2 md:ml-4 rounded-full overflow-hidden">
                             <div 
                               className="h-full bg-primary" 
                               style={{ width: `${Math.round((product.quantity / totalSalesVolume) * 100)}%` }}
@@ -469,7 +556,7 @@ const AdminDashboard: React.FC = () => {
                           
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Order Details</h4>
-                            <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                               <div>
                                 <span className="text-muted-foreground">Contact:</span>
                                 <div>{order.clientInfo?.contactPerson}</div>
@@ -478,7 +565,7 @@ const AdminDashboard: React.FC = () => {
                                 <span className="text-muted-foreground">Phone:</span>
                                 <div>{order.clientInfo?.phone}</div>
                               </div>
-                              <div className="col-span-2">
+                              <div className="col-span-1 sm:col-span-2">
                                 <span className="text-muted-foreground">Delivery Address:</span>
                                 <div>{order.clientInfo?.address}</div>
                               </div>
@@ -518,9 +605,9 @@ const AdminDashboard: React.FC = () => {
                             <span>${order.total.toFixed(2)}</span>
                           </div>
                           
-                          <div className="mt-4 flex gap-2 justify-end">
-                            <Button variant="outline" size="sm">View Details</Button>
-                            <Button size="sm">Update Status</Button>
+                          <div className="mt-4 flex flex-col sm:flex-row gap-2 sm:justify-end">
+                            <Button variant="outline" size="sm" className="w-full sm:w-auto">View Details</Button>
+                            <Button size="sm" className="w-full sm:w-auto">Update Status</Button>
                           </div>
                         </div>
                       ))}
@@ -536,12 +623,10 @@ const AdminDashboard: React.FC = () => {
             <ProductManagement />
           </TabsContent>
           
-          {/* Users Tab */}
           <TabsContent value="users" className="space-y-6 animate-fade-in">
             <UserManagement />
           </TabsContent>
           
-          {/* Clients Tab */}
           <TabsContent value="clients" className="space-y-6 animate-fade-in">
             <Card>
               <CardHeader>
@@ -558,7 +643,6 @@ const AdminDashboard: React.FC = () => {
             </Card>
           </TabsContent>
           
-          {/* Inventory Tab */}
           <TabsContent value="inventory" className="space-y-6 animate-fade-in">
             <Card>
               <CardHeader>
@@ -575,12 +659,10 @@ const AdminDashboard: React.FC = () => {
             </Card>
           </TabsContent>
           
-          {/* Downloads Tab */}
           <TabsContent value="downloads" className="space-y-6 animate-fade-in">
             <DownloadCenter />
           </TabsContent>
           
-          {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6 animate-fade-in">
             <Card>
               <CardHeader>
