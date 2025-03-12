@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Plus, Edit, Trash2, Package, FileImage, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const emptyProduct: Omit<Product, "id"> = {
   name: "",
@@ -24,9 +25,9 @@ const emptyProduct: Omit<Product, "id"> = {
 
 const ProductManagement: React.FC = () => {
   const { products: allProducts } = useOrder();
-  
-  // Since we can't directly modify the context, we'll create a local copy to manage
-  const [products, setProducts] = useState<Product[]>(allProducts);
+  const { t, i18n } = useTranslation("global");
+
+  const [products, setProducts] = useState<Product[]>(() => allProducts);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -50,7 +51,7 @@ const ProductManagement: React.FC = () => {
 
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.category || newProduct.price <= 0) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("product.toast_error_required"));
       return;
     }
     
@@ -62,14 +63,14 @@ const ProductManagement: React.FC = () => {
     setProducts([...products, productToAdd]);
     setNewProduct(emptyProduct);
     setIsAddDialogOpen(false);
-    toast.success(`Product "${productToAdd.name}" added successfully`);
+    toast.success(t("product.toast_add_success", { name: productToAdd.name }));
   };
 
   const handleEditProduct = () => {
     if (!editingProduct) return;
     
     if (!editingProduct.name || !editingProduct.category || editingProduct.price <= 0) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("product.toast_error_required"));
       return;
     }
     
@@ -78,7 +79,7 @@ const ProductManagement: React.FC = () => {
     ));
     
     setIsEditDialogOpen(false);
-    toast.success(`Product "${editingProduct.name}" updated successfully`);
+    toast.success(t("product.toast_edit_success", { name: editingProduct.name }));
   };
 
   const handleDeleteProduct = (productId: string) => {
@@ -86,7 +87,7 @@ const ProductManagement: React.FC = () => {
     if (!productToDelete) return;
     
     setProducts(products.filter(p => p.id !== productId));
-    toast.success(`Product "${productToDelete.name}" deleted successfully`);
+    toast.success(t("product.toast_delete_success", { name: productToDelete.name }));
   };
 
   const handleEditClick = (product: Product) => {
@@ -101,142 +102,42 @@ const ProductManagement: React.FC = () => {
     
     const product = products.find(p => p.id === productId);
     if (product) {
-      toast.success(`${product.name} is now ${!product.available ? 'available' : 'unavailable'}`);
+      toast.success(t("product.toast_toggle_availability", { 
+        name: product.name, 
+        status: !product.available ? t("common.available") : t("common.unavailable") 
+      }));
     }
   };
 
-  const ProductForm = ({ 
-    product, 
-    setProduct, 
-    isNew = false 
-  }: { 
-    product: Product | Omit<Product, "id">, 
-    setProduct: React.Dispatch<React.SetStateAction<any>>,
-    isNew?: boolean
-  }) => {
-    return (
-      <div className="space-y-4 py-4">
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label htmlFor="product-name" className="text-sm font-medium mb-1 block">
-              Product Name *
-            </label>
-            <Input
-              id="product-name"
-              value={product.name}
-              onChange={(e) => setProduct({...product, name: e.target.value})}
-              placeholder="Enter product name"
-            />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="product-category" className="text-sm font-medium mb-1 block">
-                Category *
-              </label>
-              <Input
-                id="product-category"
-                value={product.category}
-                onChange={(e) => setProduct({...product, category: e.target.value})}
-                placeholder="e.g. Fish, Shellfish"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="product-unit" className="text-sm font-medium mb-1 block">
-                Unit *
-              </label>
-              <select
-                id="product-unit"
-                value={product.unit}
-                onChange={(e) => setProduct({...product, unit: e.target.value})}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                <option value="kg">Kilogram (kg)</option>
-                <option value="g">Gram (g)</option>
-                <option value="lb">Pound (lb)</option>
-                <option value="oz">Ounce (oz)</option>
-                <option value="dozen">Dozen</option>
-                <option value="piece">Piece</option>
-                <option value="box">Box</option>
-              </select>
-            </div>
-          </div>
-          
-          <div>
-            <label htmlFor="product-price" className="text-sm font-medium mb-1 block">
-              Price per Unit *
-            </label>
-            <Input
-              id="product-price"
-              type="number"
-              min="0.01"
-              step="0.01"
-              value={product.price}
-              onChange={(e) => setProduct({...product, price: parseFloat(e.target.value)})}
-              placeholder="Enter price"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="product-image" className="text-sm font-medium mb-1 block">
-              Image URL
-            </label>
-            <Input
-              id="product-image"
-              value={product.image}
-              onChange={(e) => setProduct({...product, image: e.target.value})}
-              placeholder="Enter image URL"
-            />
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="product-available"
-              checked={product.available}
-              onChange={(e) => setProduct({...product, available: e.target.checked})}
-              className="rounded border-gray-300 text-primary focus:ring-primary"
-            />
-            <label htmlFor="product-available" className="text-sm font-medium">
-              Product Available for Sale
-            </label>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
+    
   return (
     <Card className="w-full">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Product Management</CardTitle>
-            <CardDescription>
-              Add, edit, and manage product inventory
-            </CardDescription>
+          <CardTitle>{t("product.title")}</CardTitle>
+          <CardDescription>{t("product.description")}</CardDescription>
           </div>
           
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2">
                 <Plus className="h-4 w-4" />
-                Add Product
+                {t("product.add_button")}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New Product</DialogTitle>
+                <DialogTitle>{t("product.add_dialog_title")}</DialogTitle>
               </DialogHeader>
-              <ProductForm product={newProduct} setProduct={setNewProduct} isNew={true} />
+              <ProductForm product={newProduct} setProduct={setNewProduct} />
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddProduct}>
-                  Add Product
-                </Button>
+              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                {t("product.cancel_button")}
+              </Button>
+              <Button onClick={handleAddProduct}>
+                {t("product.add_button")}
+              </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -248,7 +149,7 @@ const ProductManagement: React.FC = () => {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input 
               type="text" 
-              placeholder="Search products..." 
+              placeholder={t("product.searchPlaceholder")} 
               className="pl-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -259,7 +160,7 @@ const ProductManagement: React.FC = () => {
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
-            <option value="all">All Categories</option>
+            <option value="all">{t("product.allCategories")}</option>
             {categories.map(category => (
               <option key={category} value={category}>{category}</option>
             ))}
@@ -267,12 +168,12 @@ const ProductManagement: React.FC = () => {
         </div>
         
         <ScrollArea className="h-[400px] w-full pr-4">
-          <div className="space-y-3">
+        <div className="space-y-3">
             {filteredProducts.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 {searchQuery || categoryFilter !== "all" 
-                  ? "No products found matching your search criteria"
-                  : "No products have been added yet"}
+                  ? t("product.noResults")
+                  : t("product.noProducts")}
               </div>
             ) : (
               filteredProducts.map(product => (
@@ -296,11 +197,11 @@ const ProductManagement: React.FC = () => {
                             {product.category}
                           </Badge>
                           <span className="text-sm text-muted-foreground">
-                            ${product.price.toFixed(2)} / {product.unit}
+                            ${product.price.toFixed(2)} / {t(`unit.${product.unit}`)}
                           </span>
                           {!product.available && (
                             <Badge variant="secondary" className="text-xs bg-red-100 text-red-800">
-                              Unavailable
+                              {t("product.unavailable")}
                             </Badge>
                           )}
                         </div>
@@ -308,11 +209,11 @@ const ProductManagement: React.FC = () => {
                     </div>
                     
                     <div className="flex items-start gap-2">
-                      <Button 
+                    <Button 
                         variant="ghost" 
                         size="sm"
                         onClick={() => handleToggleAvailability(product.id)}
-                        title={product.available ? "Mark as unavailable" : "Mark as available"}
+                        title={product.available ? t("product.markUnavailable") : t("product.markAvailable")}
                       >
                         {product.available ? (
                           <X className="h-4 w-4 text-red-500" />
@@ -342,34 +243,148 @@ const ProductManagement: React.FC = () => {
           </div>
         </ScrollArea>
       </CardContent>
-    </Card>
-  );
-  
-  // Dialog for editing product
-  return (
-    <>
-      {/* ... main component ... */}
-      
+
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Product</DialogTitle>
+            <DialogTitle>{t("product.editTitle")}</DialogTitle>
           </DialogHeader>
           {editingProduct && (
             <ProductForm product={editingProduct} setProduct={setEditingProduct} />
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button onClick={handleEditProduct}>
-              Save Changes
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+
+      {/* Delete Confirmation Dialog */}
+      {/* <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("product.deleteTitle")}</DialogTitle>
+          </DialogHeader>
+          <p>{t("product.deleteConfirmation", { name: editingProduct?.name })}</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleDeleteProduct(editingProduct?.id)}
+            >
+              {t("common.delete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>*/}
+    </Card> 
+
   );
+};  
+
+const ProductForm: React.FC<{ product: Product | Omit<Product, "id">; setProduct: React.Dispatch<React.SetStateAction<any>> }> = ({ product, setProduct }) => {
+  const { t, i18n } = useTranslation("global");
+
+  return (
+  <div className="space-y-4 py-4">
+    <div className="grid grid-cols-1 gap-4">
+      <div>
+        <label htmlFor="product-name" className="text-sm font-medium mb-1 block">
+          {t("product.name_label")}
+        </label>
+        <Input
+          id="product-name"
+          value={product.name}
+          onChange={(e) => setProduct((prev) => ({ ...prev, name: e.target.value }))}
+          placeholder={t("product.name_placeholder")}
+        />
+
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="product-category" className="text-sm font-medium mb-1 block">
+          {t("product.category_label")}
+          </label>
+          <Input
+          id="product-category"
+          value={product.category}
+          onChange={(e) => setProduct({ ...product, category: e.target.value })}
+          placeholder={t("product.category_placeholder")}
+        />
+        </div>
+        
+        <div>
+        <label htmlFor="product-unit" className="text-sm font-medium mb-1 block">
+          {t("product.unit_label")}
+        </label>
+          <select
+            id="product-unit"
+            value={product.unit}
+            onChange={(e) => setProduct({...product, unit: e.target.value})}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="kg">{t("unit.kg")}</option>
+            <option value="g">{t("unit.g")}</option>
+            <option value="lb">{t("unit.lb")}</option>
+            <option value="oz">{t("unit.oz")}</option>
+            <option value="dozen">{t("unit.dozen")}</option>
+            <option value="piece">{t("unit.piece")}</option>
+            <option value="box">{t("unit.box")}</option>
+          </select>
+        </div>
+      </div>
+      
+      <div>
+        <label htmlFor="product-price" className="text-sm font-medium mb-1 block">
+        {t("product.price_label")}
+        </label>
+        <Input
+        id="product-price"
+        type="number"
+        min="0.01"
+        step="0.01"
+        value={product.price}
+        onChange={(e) => setProduct({ ...product, price: parseFloat(e.target.value) })}
+        placeholder={t("product.price_placeholder")}
+      />
+      </div>
+      
+      <div>
+        <label htmlFor="product-image" className="text-sm font-medium mb-1 block">
+        {t("product.image_label")}
+        </label>
+        <Input
+        id="product-image"
+        value={product.image}
+        onChange={(e) => setProduct({ ...product, image: e.target.value })}
+        placeholder={t("product.image_placeholder")}
+      />
+      </div>
+      
+      <div className="flex items-center gap-2">
+      <input
+        type="checkbox"
+        id="product-available"
+        checked={product.available}
+        onChange={(e) => setProduct({ ...product, available: e.target.checked })}
+        className="rounded border-gray-300 text-primary focus:ring-primary"
+      />
+       <label htmlFor="product-available" className="text-sm font-medium">
+        {t("product.availability_label")}
+      </label>
+      </div>
+    </div>
+  </div>
+);
 };
+
+  // Dialog for editing product
 
 export default ProductManagement;

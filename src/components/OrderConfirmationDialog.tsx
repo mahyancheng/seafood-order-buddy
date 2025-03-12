@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { OrderSummary } from "@/components/ui/order-summary";
 import { Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface OrderConfirmationDialogProps {
   open: boolean;
@@ -32,12 +33,15 @@ export function OrderConfirmationDialog({
   onClose,
   orderData
 }: OrderConfirmationDialogProps) {
+
+  const { t, i18n } = useTranslation("global");
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[85%] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold text-[#ea384c]">
-            Order Submitted Successfully
+          {t("order.order_submitted_success")}
           </DialogTitle>
         </DialogHeader>
         
@@ -53,7 +57,7 @@ export function OrderConfirmationDialog({
         <div className="flex justify-end mt-6">
           <Button onClick={onClose} className="bg-[#ea384c] hover:bg-[#d1293d]">
             <Check className="mr-2 h-4 w-4" />
-            Done
+          {t("order.done")}
           </Button>
         </div>
       </DialogContent>

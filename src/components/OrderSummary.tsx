@@ -14,12 +14,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner"; // Add this import for toast
+import { useTranslation } from "react-i18next";
 
 const OrderSummary: React.FC = () => {
   const { cart, products, updateProductQuantity, removeProductFromCart, submitOrder, getCartTotal } = useOrder();
   const [date, setDate] = useState<Date | undefined>(new Date(Date.now() + 86400000)); // Tomorrow
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t, i18n } = useTranslation("global");
   const [clientInfo, setClientInfo] = useState({
     name: "",
     address: "",
@@ -53,7 +55,7 @@ const OrderSummary: React.FC = () => {
     setIsSubmitting(true);
     // Validate client info
     if (!clientInfo.name || !clientInfo.address || !clientInfo.contactPerson || !clientInfo.phone) {
-      toast.error("Please fill in all required client information");
+      toast.error(t("order.error_fill_in_all_client_infomation"));
       setIsSubmitting(false);
       return;
     }
@@ -81,17 +83,15 @@ const OrderSummary: React.FC = () => {
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-xl font-medium">Cart Summary</CardTitle>
-            <CardDescription>
-              Review and submit your order
-            </CardDescription>
+          <CardTitle>{t("order.cart_summary")}</CardTitle>
+          <CardDescription>{t("order.review_and_submit")}</CardDescription>
           </div>
         </div>
       </CardHeader>
-      
+
       <div className="px-6 py-2">
         <div className="flex items-center justify-between text-sm mt-1">
-          <span className="text-muted-foreground">Delivery Date:</span>
+          <span className="text-muted-foreground">{t("order.delivery_date")}:</span>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -103,7 +103,7 @@ const OrderSummary: React.FC = () => {
                 size="sm"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                {date ? format(date, "PPP") : <span>{t("order.pick_a_date")}</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -126,7 +126,7 @@ const OrderSummary: React.FC = () => {
           <div className="px-6 py-4 space-y-4">
             {cart.length === 0 ? (
               <div className="text-center py-6 text-muted-foreground">
-                No items in cart yet. Add products from the list.
+             {t("order.no_items")}
               </div>
             ) : (
               <div className="space-y-4">
@@ -182,7 +182,7 @@ const OrderSummary: React.FC = () => {
                         </div>
                         {item.notes && (
                           <p className="text-xs italic mt-1 text-muted-foreground">
-                            Note: {item.notes}
+                           {t("order.notes")} {item.notes}
                           </p>
                         )}
                       </div>
@@ -195,17 +195,17 @@ const OrderSummary: React.FC = () => {
             <div className="space-y-3 pt-4">
               <Separator />
               <div className="flex justify-between text-lg font-medium">
-                <span>Total:</span>
+                <span>{t("order.total")}:</span>
                 <span>${cartTotal.toFixed(2)}</span>
               </div>
               
               <div className="space-y-2">
                 <label htmlFor="specialInstructions" className="text-sm font-medium">
-                  Special Instructions
+                {t("order.special_instructions")}
                 </label>
                 <Textarea
                   id="specialInstructions"
-                  placeholder="Add any special instructions for this order..."
+                  placeholder={t("order.add_special_instructions")}
                   value={specialInstructions}
                   onChange={(e) => setSpecialInstructions(e.target.value)}
                   className="resize-none h-24"
@@ -225,20 +225,20 @@ const OrderSummary: React.FC = () => {
               disabled={cart.length === 0}
             >
               <Send className="mr-2 h-4 w-4" />
-              Proceed to Checkout
+              {t("order.proceed_to_checkout")}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Client Information</DialogTitle>
+              <DialogTitle>{t("order.client_details")}</DialogTitle>
               <DialogDescription>
-                Enter client details for the order
+              {t("order.client_details")}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="name" className="text-right text-sm">
-                  Company Name *
+                {t("order.company_name")} *
                 </label>
                 <Input
                   id="name"
@@ -251,7 +251,7 @@ const OrderSummary: React.FC = () => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="address" className="text-right text-sm">
-                  Address *
+                {t("order.address_label")} *
                 </label>
                 <Input
                   id="address"
@@ -264,7 +264,7 @@ const OrderSummary: React.FC = () => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="contactPerson" className="text-right text-sm">
-                  Contact Person *
+                {t("order.contact_label")} *
                 </label>
                 <Input
                   id="contactPerson"
@@ -277,7 +277,7 @@ const OrderSummary: React.FC = () => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="phone" className="text-right text-sm">
-                  Phone *
+                {t("order.phone_label")} *
                 </label>
                 <Input
                   id="phone"
@@ -290,7 +290,7 @@ const OrderSummary: React.FC = () => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="email" className="text-right text-sm">
-                  Email
+                {t("order.email_label")}
                 </label>
                 <Input
                   id="email"
@@ -305,23 +305,17 @@ const OrderSummary: React.FC = () => {
             <DialogFooter>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button disabled={isSubmitting}>
-                    {isSubmitting ? "Submitting..." : "Submit Order"}
-                  </Button>
+                <Button disabled={isSubmitting}>{isSubmitting ? t("order.submitting") : t("order.submit_order")}</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Order Submission</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to submit this order?
-                      This action cannot be undone.
-                    </AlertDialogDescription>
+                    <AlertDialogTitle>{t("order.confirm_submission")}</AlertDialogTitle>
+                    <AlertDialogDescription>{t("order.confirmation_message")}</AlertDialogDescription>
+
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleSubmitOrder}>
-                      Submit Order
-                    </AlertDialogAction>
+                    <AlertDialogCancel>{t("order.cancel")}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleSubmitOrder}>{t("order.confirm")}</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

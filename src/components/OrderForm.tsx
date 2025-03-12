@@ -17,6 +17,7 @@ import { CalendarIcon, Plus, Trash2, ChevronDown, Edit, X, User, Building, Phone
 import { cn } from "@/lib/utils";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { OrderConfirmationDialog } from "@/components/OrderConfirmationDialog";
+import { useTranslation } from "react-i18next";
 
 const OrderForm: React.FC = () => {
   const { products, addProductToCart, removeProductFromCart, updateProductQuantity, cart, getCartTotal, submitOrder } = useOrder();
@@ -40,6 +41,7 @@ const OrderForm: React.FC = () => {
     phone: "",
     email: ""
   });
+  const { t, i18n } = useTranslation("global");
   
   // State for special instructions and delivery date
   const [specialInstructions, setSpecialInstructions] = useState("");
@@ -83,7 +85,7 @@ const OrderForm: React.FC = () => {
       return {
         id: existingItem?.id || index + 1,
         productId: cartItem.productId,
-        description: product?.name || "Custom Item",
+        description: product?.name || t("order.custom_item"),
         quantity: cartItem.quantity,
         unitPrice: cartItem.unitPrice,
         total: cartItem.quantity * cartItem.unitPrice,
@@ -126,7 +128,7 @@ const OrderForm: React.FC = () => {
   // Handle adding a custom product
   const handleAddCustomProduct = (index: number) => {
     if (!customProduct.name || customProduct.price <= 0) {
-      toast.error("Please enter a name and valid price for the custom product");
+      toast.error(t("order.error_custom_product"));
       return;
     }
     
@@ -149,7 +151,7 @@ const OrderForm: React.FC = () => {
     setCustomProduct({ name: "", price: 0 });
     setShowCustomProduct(false);
     
-    toast.success("Custom product added");
+    toast.success(t("order.custom_product_added"));
     
     // Close editing mode if open
     if (isEditing) {
@@ -222,7 +224,7 @@ const OrderForm: React.FC = () => {
       {
         id: orderItems.length + 1,
         productId: "",
-        description: "Click to select",
+        description: (t("order.click_to_select")),
         quantity: 1,
         unitPrice: 0,
         total: 0,
@@ -234,12 +236,12 @@ const OrderForm: React.FC = () => {
   // Handle submit order
   const handleSubmitOrder = () => {
     if (orderItems.length === 0 || !orderItems.some(item => item.productId)) {
-      toast.error("Please add at least one product to the order");
+      toast.error(t("order.error_custom_product"));
       return;
     }
     
     if (!clientInfo.name || !clientInfo.contactPerson || !clientInfo.phone) {
-      toast.error("Please fill in the required client information");
+      toast.error(t("order.error_client_info"));
       return;
     }
     
@@ -284,7 +286,7 @@ const OrderForm: React.FC = () => {
     });
     setSpecialInstructions("");
     
-    toast.success("Order submitted successfully!");
+    toast.success(t("order.order_submitted"));
   };
 
   return (
@@ -322,13 +324,13 @@ const OrderForm: React.FC = () => {
             </div>
             
             <div className="w-full border-b-2 border-[#ea384c] my-2"></div>
-            <h3 className="font-bold text-xl w-full text-center">SALES ORDER</h3>
+            <h3 className="font-bold text-xl w-full text-center">{t("order.sales_order")}</h3>
           </div>
           
           {/* Client Information - Updated to be similar to the order table */}
           <div className="mt-4 border rounded-md overflow-hidden">
             <div className="bg-gray-100 p-3 flex justify-between items-center">
-              <h3 className="font-medium text-sm">Client Information</h3>
+              <h3 className="font-medium text-sm">{t("order.client_info")}</h3>
               <Button 
                 onClick={() => setIsEditingClientInfo(!isEditingClientInfo)} 
                 variant="outline" 
@@ -338,12 +340,12 @@ const OrderForm: React.FC = () => {
                 {isEditingClientInfo ? (
                   <>
                     <X className="mr-1 h-3 w-3" />
-                    Cancel
+                    {t("order.cancel")}
                   </>
                 ) : (
                   <>
                     <Edit className="mr-1 h-3 w-3" />
-                    Edit
+                    {t("order.edit")}
                   </>
                 )}
               </Button>
@@ -354,14 +356,14 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 items-center">
                   <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
                     <Building className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Client Name <span className="text-red-500 ml-1">*</span>
+                    {t("order.company_client_name")}<span className="text-red-500 ml-1">*</span>
                   </div>
                   <div className="col-span-12 sm:col-span-9">
                     <Input
                       name="name"
                       value={clientInfo.name}
                       onChange={handleClientInfoChange}
-                      placeholder="Company or client name"
+                      placeholder={t("order.company_client_name")}
                       required
                       className="h-9"
                     />
@@ -371,14 +373,14 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 items-center">
                   <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
                     <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Address
+                    {t("order.address")}
                   </div>
                   <div className="col-span-12 sm:col-span-9">
                     <Textarea
                       name="address"
                       value={clientInfo.address}
                       onChange={handleClientInfoChange}
-                      placeholder="Delivery address"
+                      placeholder={t("order.delivery_address")}
                       className="resize-none h-16"
                     />
                   </div>
@@ -387,14 +389,14 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 items-center">
                   <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
                     <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Contact Person <span className="text-red-500 ml-1">*</span>
+                    {t("order.contact_person")} <span className="text-red-500 ml-1">*</span>
                   </div>
                   <div className="col-span-12 sm:col-span-9">
                     <Input
                       name="contactPerson"
                       value={clientInfo.contactPerson}
                       onChange={handleClientInfoChange}
-                      placeholder="Contact person name"
+                      placeholder={t("order.contact_person_placeholder")}
                       required
                       className="h-9"
                     />
@@ -404,14 +406,14 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 items-center">
                   <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
                     <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Phone <span className="text-red-500 ml-1">*</span>
+                    {t("order.phone")} <span className="text-red-500 ml-1">*</span>
                   </div>
                   <div className="col-span-12 sm:col-span-9">
                     <Input
                       name="phone"
                       value={clientInfo.phone}
                       onChange={handleClientInfoChange}
-                      placeholder="Contact phone number"
+                      placeholder={t("order.phone_placeholder")}
                       required
                       className="h-9"
                     />
@@ -421,7 +423,7 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 items-center">
                   <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
                     <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Email
+                    {t("order.email")}
                   </div>
                   <div className="col-span-12 sm:col-span-9">
                     <Input
@@ -429,7 +431,7 @@ const OrderForm: React.FC = () => {
                       type="email"
                       value={clientInfo.email}
                       onChange={handleClientInfoChange}
-                      placeholder="Contact email"
+                      placeholder={t("order.email_placeholder")}
                       className="h-9"
                     />
                   </div>
@@ -438,7 +440,7 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 items-center">
                   <div className="col-span-12 sm:col-span-3 flex items-center text-sm font-medium">
                     <CalendarIconOutline className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Delivery Date
+                    {t("order.delivery_date")}
                   </div>
                   <div className="col-span-12 sm:col-span-9">
                     <Popover>
@@ -451,7 +453,7 @@ const OrderForm: React.FC = () => {
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {deliveryDate ? format(deliveryDate, "PPP") : <span>Pick a date</span>}
+                          {deliveryDate ? format(deliveryDate, "PPP") : <span>{t("order.pick_a_date")}</span>}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
@@ -472,23 +474,23 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
                   <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
                     <Building className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Client
+                    {t("order.client")}
                   </div>
                   <div className="col-span-8 sm:col-span-9 text-sm">
-                    {clientInfo.name || <span className="text-muted-foreground italic">Not set</span>}
+                    {clientInfo.name || <span className="text-muted-foreground italic">{t("order.not_set")}</span>}
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
                   <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
                     <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Address
+                    {t("order.address")}
                   </div>
                   <div className="col-span-8 sm:col-span-9 text-sm">
                     {clientInfo.address ? (
                       <span className="whitespace-pre-line">{clientInfo.address}</span>
                     ) : (
-                      <span className="text-muted-foreground italic">Not set</span>
+                      <span className="text-muted-foreground italic">{t("order.not_set")}</span>
                     )}
                   </div>
                 </div>
@@ -496,40 +498,39 @@ const OrderForm: React.FC = () => {
                 <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
                   <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
                     <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Contact
+                    {t("order.contact")}
                   </div>
                   <div className="col-span-8 sm:col-span-9 text-sm">
-                    {clientInfo.contactPerson || <span className="text-muted-foreground italic">Not set</span>}
+                    {clientInfo.contactPerson || <span className="text-muted-foreground italic">{t("order.not_set")}</span>}
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
                   <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
                     <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Phone
-                  </div>
+                    {t("order.phone")}                  </div>
                   <div className="col-span-8 sm:col-span-9 text-sm">
-                    {clientInfo.phone || <span className="text-muted-foreground italic">Not set</span>}
+                    {clientInfo.phone || <span className="text-muted-foreground italic">{t("order.not_set")}</span>}
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
                   <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
                     <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Email
+                    {t("order.email")}
                   </div>
                   <div className="col-span-8 sm:col-span-9 text-sm">
-                    {clientInfo.email || <span className="text-muted-foreground italic">Not set</span>}
+                    {clientInfo.email || <span className="text-muted-foreground italic">{t("order.not_set")}</span>}
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-12 gap-2 p-3 hover:bg-gray-50">
                   <div className="col-span-4 sm:col-span-3 flex items-center text-sm font-medium">
                     <CalendarIconOutline className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Delivery
+                    {t("order.delivery")}
                   </div>
                   <div className="col-span-8 sm:col-span-9 text-sm">
-                    {deliveryDate ? format(deliveryDate, "PPP") : <span className="text-muted-foreground italic">Not set</span>}
+                    {deliveryDate ? format(deliveryDate, "PPP") : <span className="text-muted-foreground italic">{t("order.not_set")}</span>}
                   </div>
                 </div>
               </div>
@@ -538,35 +539,30 @@ const OrderForm: React.FC = () => {
         </CardHeader>
         
         <Separator />
-        
+
         <CardContent className="p-3 sm:p-6">
           {/* Order Items Table - Optimized for both mobile and desktop */}
           <div className="mb-4">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="font-medium text-sm">Order Items</h3>
-              <Button 
-                onClick={addNewRow}
-                variant="outline"
-                size="sm"
-                className="h-8"
-              >
+              <h3 className="font-medium text-sm">{t("order.order_items")}</h3>
+              <Button onClick={addNewRow} variant="outline" size="sm" className="h-8">
                 <Plus className="mr-1 h-3 w-3" />
-                Add Item
+                {t("order.add_item")}
               </Button>
             </div>
-            
+
             {/* Responsive Table Design */}
             <div className="border rounded-md overflow-hidden">
-              {/* Table Header */}
+              { }
               <div className="bg-gray-100 grid grid-cols-12 gap-1 p-2 text-xs font-medium border-b text-gray-700">
                 <div className="col-span-1 flex items-center justify-center">#</div>
-                <div className="col-span-4 sm:col-span-5">Item</div>
-                <div className="col-span-2 text-center">Qty</div>
-                <div className="col-span-2 text-center hidden sm:block">Unit</div>
-                <div className="col-span-2 sm:col-span-1 text-center">Price</div>
-                <div className="col-span-3 sm:col-span-1 flex justify-end">Actions</div>
+                <div className="col-span-4 sm:col-span-5">{t("order.item")}</div>
+                <div className="col-span-2 text-center">{t("order.quantity")}</div>
+                <div className="col-span-2 text-center hidden sm:block">{t("order.unit")}</div>
+                <div className="col-span-2 sm:col-span-1 text-center">{t("order.price")}</div>
+                <div className="col-span-3 sm:col-span-1 flex justify-end">{t("order.actions")}</div>
               </div>
-              
+
               {/* Table Body */}
               <div className="divide-y">
                 {orderItems.length > 0 ? (
@@ -600,20 +596,20 @@ const OrderForm: React.FC = () => {
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                    Other / Custom Item
+                                  {t("order.other_custom_item")}
                                   </DropdownMenuItem>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent className="w-[95vw] max-w-md">
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Add Custom Item</AlertDialogTitle>
+                                    <AlertDialogTitle>{t("order.add_custom_item")}</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Enter the details for your custom item.
+                                    {t("order.enter_custom_details")}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <div className="grid gap-4 py-2">
                                     <div className="grid items-center gap-2">
                                       <label htmlFor="customName" className="text-sm font-medium">
-                                        Name
+                                      {t("order.name")}
                                       </label>
                                       <Input
                                         id="customName"
@@ -623,7 +619,7 @@ const OrderForm: React.FC = () => {
                                     </div>
                                     <div className="grid items-center gap-2">
                                       <label htmlFor="customPrice" className="text-sm font-medium">
-                                        Price
+                                      {t("order.price")}
                                       </label>
                                       <Input
                                         id="customPrice"
@@ -636,10 +632,8 @@ const OrderForm: React.FC = () => {
                                     </div>
                                   </div>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleAddCustomProduct(index)}>
-                                      Add Item
-                                    </AlertDialogAction>
+                                    <AlertDialogCancel>{t("order.cancel")}</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleAddCustomProduct(index)}>{t("order.add")}</AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
                               </AlertDialog>
@@ -650,7 +644,7 @@ const OrderForm: React.FC = () => {
                             {item.description}
                             {item.notes && (
                               <div className="text-xs text-muted-foreground truncate mt-1" title={item.notes}>
-                                Note: {item.notes}
+                                {t("order.notes")}: {item.notes}
                               </div>
                             )}
                           </div>
@@ -674,9 +668,9 @@ const OrderForm: React.FC = () => {
                       
                       <div className="col-span-2 text-center hidden sm:block">
                         {editingItemIndex === index ? (
-                          <div className="text-center">{products.find(p => p.id === item.productId)?.unit || 'unit'}</div>
+                          <div className="text-center">{products.find(p => p.id === item.productId)?.unit ||  t("order.unit")}</div>
                         ) : (
-                          <div>{products.find(p => p.id === item.productId)?.unit || 'unit'}</div>
+                          <div>{products.find(p => p.id === item.productId)?.unit ||  t("order.unit")}</div>
                         )}
                       </div>
                       
@@ -712,7 +706,7 @@ const OrderForm: React.FC = () => {
                           </Label>
                           <Input
                             id={`note-${index}`}
-                            placeholder="Add notes (optional)"
+                            placeholder={t("order.add_notes_optional")}
                             value={item.notes}
                             onChange={(e) => {
                               const updatedItems = [...orderItems];
@@ -735,7 +729,7 @@ const OrderForm: React.FC = () => {
                   ))
                 ) : (
                   <div className="p-4 text-center text-muted-foreground">
-                    No items added yet. Click "Add Item" to begin your order.
+                    {t("order.no_items")}
                   </div>
                 )}
               </div>
@@ -744,7 +738,7 @@ const OrderForm: React.FC = () => {
               {orderItems.length > 0 && (
                 <div className="bg-gray-100 p-3 border-t">
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Order Total:</span>
+                  <span className="font-medium">{t("order.order_total")}:</span>
                     <span className="text-lg font-bold">${getCartTotal().toFixed(2)}</span>
                   </div>
                 </div>
@@ -754,11 +748,11 @@ const OrderForm: React.FC = () => {
             {/* Special Instructions */}
             <div className="mt-4">
               <label htmlFor="specialInstructions" className="text-sm font-medium block mb-2">
-                Special Instructions
+              {t("order.special_instructions")}
               </label>
               <Textarea
                 id="specialInstructions"
-                placeholder="Add any special instructions for this order..."
+                placeholder={t("order.add_special_instructions")} 
                 value={specialInstructions}
                 onChange={(e) => setSpecialInstructions(e.target.value)}
                 className="resize-none h-20"
@@ -770,21 +764,20 @@ const OrderForm: React.FC = () => {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button className="w-full" disabled={isSubmitting || orderItems.length === 0}>
-                    {isSubmitting ? "Submitting..." : "Submit Order"}
+                  {isSubmitting ? t("order.submitting") : t("order.submit_order")}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="w-[95vw] max-w-md">
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Order Submission</AlertDialogTitle>
+                    <AlertDialogTitle>{t("order.confirm_submission")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to submit this order?
-                      This action cannot be undone.
+                    {t("order.confirm_submission_message")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel> {t("order.cancel")}</AlertDialogCancel>
                     <AlertDialogAction onClick={handleSubmitOrder}>
-                      Submit Order
+                    {t("order.submit_order")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

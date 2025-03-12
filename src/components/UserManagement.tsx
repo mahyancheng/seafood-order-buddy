@@ -17,11 +17,12 @@ import {
   UserCog, ShieldCheck, Shield, Search 
 } from "lucide-react";
 import { useOrder } from "@/context/OrderContext";
+import { useTranslation } from "react-i18next";
 
 const UserManagement: React.FC = () => {
   const { allUsers, addUser, removeUser, updateUser, user: currentUser } = useAuth();
   const { orders } = useOrder();
-  
+  const { t, i18n } = useTranslation("global");
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   const [showEditUserDialog, setShowEditUserDialog] = useState(false);
   const [showUserStatsDialog, setShowUserStatsDialog] = useState(false);
@@ -62,13 +63,14 @@ const UserManagement: React.FC = () => {
   // Handle add user
   const handleAddUser = () => {
     if (!newUserName.trim() || !newUserEmail.trim() || !newUserPassword.trim()) {
-      toast.error("All fields are required");
+      toast.error(t("user.toast_error_required"));
       return;
     }
     
     addUser(newUserName, newUserEmail, newUserPassword, newUserRole);
     resetAddUserForm();
     setShowAddUserDialog(false);
+    toast.success(t("user.add_success", { name: newUserName }));
   };
   
   // Open edit user dialog
@@ -104,13 +106,14 @@ const UserManagement: React.FC = () => {
     }
     
     if (Object.keys(updates).length === 0) {
-      toast.info("No changes were made");
+      toast.info(t("user.toast_no_changes"));
       setShowEditUserDialog(false);
       return;
     }
     
     updateUser(editingUser.id, updates);
     setShowEditUserDialog(false);
+    toast.success(t("user.edit_success", { name: editName }));
   };
   
   // Open user stats dialog
@@ -145,64 +148,62 @@ const UserManagement: React.FC = () => {
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle>User Management</CardTitle>
-            <CardDescription>
-              Add, edit, and remove user accounts
-            </CardDescription>
+          <CardTitle>{t("user.management")}</CardTitle>
+          <CardDescription>{t("user.description")}</CardDescription>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input 
-                type="text" 
-                placeholder="Search users..." 
-                className="pl-9"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <Input
+            type="text"
+            placeholder={t("user.search_placeholder")}
+            className="pl-9"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
             </div>
             
             <Dialog open={showAddUserDialog} onOpenChange={setShowAddUserDialog}>
               <DialogTrigger asChild>
                 <Button className="flex items-center gap-2">
                   <UserPlus className="h-4 w-4" />
-                  Add User
+                  {t("user.add")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Add New User</DialogTitle>
+                  <DialogTitle>{t("user.add_title")}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input 
-                      id="name" 
+                    <Label htmlFor="name">{t("user.name_label")}</Label>
+                    <Input
+                      id="name"
                       value={newUserName}
                       onChange={(e) => setNewUserName(e.target.value)}
-                      placeholder="Enter user's full name"
+                      placeholder={t("user.name_placeholder")}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email" 
+                    <Label htmlFor="email">{t("user.email_label")}</Label>
+                    <Input
+                      id="email"
                       type="email"
                       value={newUserEmail}
                       onChange={(e) => setNewUserEmail(e.target.value)}
-                      placeholder="Enter user's email"
+                      placeholder={t("user.email_placeholder")}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t("user.password_label")}</Label>
                     <div className="relative">
-                      <Input 
-                        id="password" 
+                      <Input
+                        id="password"
                         type={showPassword ? "text" : "password"}
                         value={newUserPassword}
                         onChange={(e) => setNewUserPassword(e.target.value)}
-                        placeholder="Enter user's password"
+                        placeholder={t("user.password_placeholder")}
                         className="pr-10"
                       />
                       <Button
@@ -211,49 +212,45 @@ const UserManagement: React.FC = () => {
                         className="absolute right-0 top-0 h-full px-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="role">Role</Label>
+                    <Label htmlFor="role">{t("user.role_label")}</Label>
                     <select
                       id="role"
                       className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                       value={newUserRole}
                       onChange={(e) => setNewUserRole(e.target.value as "salesperson" | "admin")}
                     >
-                      <option value="salesperson">Salesperson</option>
-                      <option value="admin">Admin</option>
+                      <option value="salesperson">{t("user.role_salesperson")}</option>
+                      <option value="admin">{t("user.role_admin")}</option>
                     </select>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => {
                       resetAddUserForm();
                       setShowAddUserDialog(false);
                     }}
                   >
-                    Cancel
+                    {t("user.cancel")}
                   </Button>
-                  <Button onClick={handleAddUser}>Create User</Button>
+                  <Button onClick={handleAddUser}>{t("user.create")}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         {filteredUsers.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            {searchQuery ? "No users matching your search" : "No users found"}
+            {searchQuery ? t("user.no_matches") : t("user.no_users")}
           </div>
         ) : (
           <ScrollArea className="h-[500px]">
@@ -261,13 +258,12 @@ const UserManagement: React.FC = () => {
               {filteredUsers.map((user) => {
                 const isCurrentUser = currentUser?.id === user.id;
                 const userStats = calculateUserStats(user.id);
-                
+
                 return (
-                  <div 
-                    key={user.id} 
-                    className={`border p-4 rounded-lg transition-colors ${
-                      isCurrentUser ? "border-primary/50 bg-primary/5" : "hover:border-primary/30 hover:bg-primary/5"
-                    }`}
+                  <div
+                    key={user.id}
+                    className={`border p-4 rounded-lg transition-colors ${isCurrentUser ? "border-primary/50 bg-primary/5" : "hover:border-primary/30 hover:bg-primary/5"
+                      }`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center gap-3">
@@ -283,73 +279,59 @@ const UserManagement: React.FC = () => {
                             {user.name}
                             {isCurrentUser && (
                               <Badge variant="outline" className="text-xs ml-2">
-                                You
+                                {t("user.you")}
                               </Badge>
                             )}
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {user.email}
-                          </div>
+                          <div className="text-sm text-muted-foreground">{user.email}</div>
                         </div>
                       </div>
                       <Badge className={`${user.role === "admin" ? "bg-purple-500" : "bg-blue-500"} text-white flex items-center gap-1`}>
                         {user.role === "admin" ? (
                           <>
                             <ShieldCheck className="h-3 w-3" />
-                            Admin
+                            {t("user.role_admin")}
                           </>
                         ) : (
                           <>
                             <UserCog className="h-3 w-3" />
-                            Salesperson
+                            {t("user.role_salesperson")}
                           </>
                         )}
                       </Badge>
                     </div>
-                    
+
                     <Separator className="my-3" />
-                    
+
                     <div className="grid grid-cols-3 gap-2 mb-3">
                       <div className="rounded-lg bg-secondary/30 p-2 text-center">
-                        <div className="text-sm text-muted-foreground">Orders</div>
+                        <div className="text-sm text-muted-foreground">{t("user.orders_label")}</div>
                         <div className="font-medium">{userStats.totalOrders}</div>
                       </div>
                       <div className="rounded-lg bg-secondary/30 p-2 text-center">
-                        <div className="text-sm text-muted-foreground">Completed</div>
+                        <div className="text-sm text-muted-foreground">{t("user.completed_orders_label")}</div>
                         <div className="font-medium">{userStats.completedOrders}</div>
                       </div>
                       <div className="rounded-lg bg-secondary/30 p-2 text-center">
-                        <div className="text-sm text-muted-foreground">Revenue</div>
+                        <div className="text-sm text-muted-foreground">{t("user.revenue_label")}</div>
                         <div className="font-medium">${userStats.totalRevenue.toFixed(2)}</div>
                       </div>
                     </div>
-                    
+
                     <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => openUserStatsDialog(user)}
-                      >
-                        View Stats
+                      <Button variant="outline" size="sm" onClick={() => openUserStatsDialog(user)}>
+                        {t("user.view_stats")}
                       </Button>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openEditUserDialog(user)}
-                      >
+
+                      <Button variant="outline" size="sm" onClick={() => openEditUserDialog(user)}>
                         <Edit className="h-4 w-4 mr-1" />
-                        Edit
+                        {t("user.edit")}
                       </Button>
-                      
+
                       {!isCurrentUser && (
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => removeUser(user.id)}
-                        >
+                        <Button variant="destructive" size="sm" onClick={() => removeUser(user.id)}>
                           <UserMinus className="h-4 w-4 mr-1" />
-                          Remove
+                          {t("user.remove")}
                         </Button>
                       )}
                     </div>
@@ -365,12 +347,12 @@ const UserManagement: React.FC = () => {
       <Dialog open={showEditUserDialog} onOpenChange={setShowEditUserDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
+          <DialogTitle>{t("user.edit_user")}</DialogTitle>
           </DialogHeader>
           {editingUser && (
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="edit-name">Name</Label>
+              <Label htmlFor="edit-name">{t("user.name_label")}</Label>
                 <Input 
                   id="edit-name" 
                   value={editName}
@@ -378,7 +360,7 @@ const UserManagement: React.FC = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="edit-email">Email</Label>
+              <Label htmlFor="edit-email">{t("user.email_label")}</Label>
                 <Input 
                   id="edit-email" 
                   type="email"
@@ -388,15 +370,18 @@ const UserManagement: React.FC = () => {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="edit-password">
-                  Password <span className="text-muted-foreground text-xs">(Leave blank to keep current)</span>
+                  {t("user.password_label")}{" "}
+                  <span className="text-muted-foreground text-xs">
+                    ({t("user.password_hint")})
+                  </span>
                 </Label>
                 <div className="relative">
-                  <Input 
-                    id="edit-password" 
+                  <Input
+                    id="edit-password"
                     type={showPassword ? "text" : "password"}
                     value={editPassword}
                     onChange={(e) => setEditPassword(e.target.value)}
-                    placeholder="Enter new password"
+                    placeholder={t("user.password_placeholder")}
                     className="pr-10"
                   />
                   <Button
@@ -414,90 +399,87 @@ const UserManagement: React.FC = () => {
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="edit-role">Role</Label>
+                <Label htmlFor="edit-role">{t("user.role_label")}</Label>
                 <select
                   id="edit-role"
                   className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   value={editRole}
                   onChange={(e) => setEditRole(e.target.value as "salesperson" | "admin")}
                 >
-                  <option value="salesperson">Salesperson</option>
-                  <option value="admin">Admin</option>
+                  <option value="salesperson">{t("user.role_salesperson")}</option>
+                  <option value="admin">{t("user.role_admin")}</option>
                 </select>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowEditUserDialog(false)}
-            >
-              Cancel
+            <Button variant="outline" onClick={() => setShowEditUserDialog(false)}>
+              {t("user.cancel")}
             </Button>
-            <Button onClick={handleEditUser}>Save Changes</Button>
+            <Button onClick={handleEditUser}>{t("user.save_changes")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* User Stats Dialog */}
       <Dialog open={showUserStatsDialog} onOpenChange={setShowUserStatsDialog}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>
-              {viewingUser?.name}'s Performance Statistics
+            {t("user.performance_stats", { name: viewingUser?.name })}
             </DialogTitle>
           </DialogHeader>
           {viewingUser && (
             <div className="py-4">
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="rounded-lg bg-blue-50 p-4 text-center border border-blue-100">
-                  <div className="text-sm text-blue-600">Total Orders</div>
+                  <div className="text-sm text-blue-600">{t("user.total_orders")}</div>
                   <div className="text-2xl font-bold text-blue-700">
                     {calculateUserStats(viewingUser.id).totalOrders}
                   </div>
                 </div>
                 <div className="rounded-lg bg-green-50 p-4 text-center border border-green-100">
-                  <div className="text-sm text-green-600">Total Revenue</div>
+                  <div className="text-sm text-green-600">{t("user.total_revenue")}</div>
                   <div className="text-2xl font-bold text-green-700">
                     ${calculateUserStats(viewingUser.id).totalRevenue.toFixed(2)}
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
-                <h3 className="font-medium">Order Status Breakdown</h3>
+                <h3 className="font-medium">{t("user.order_status_breakdown")}</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div className="rounded-lg bg-blue-50 p-2 text-center border border-blue-100">
-                    <div className="text-xs text-blue-600">Submitted</div>
+                    <div className="text-xs text-blue-600">{t("user.submitted_orders")}</div>
                     <div className="font-bold text-blue-700">
                       {calculateUserStats(viewingUser.id).submittedOrders}
                     </div>
                   </div>
                   <div className="rounded-lg bg-yellow-50 p-2 text-center border border-yellow-100">
-                    <div className="text-xs text-yellow-600">Processing</div>
+                    <div className="text-xs text-yellow-600">{t("user.processing_orders")}</div>
                     <div className="font-bold text-yellow-700">
                       {calculateUserStats(viewingUser.id).processingOrders}
                     </div>
                   </div>
                   <div className="rounded-lg bg-green-50 p-2 text-center border border-green-100">
-                    <div className="text-xs text-green-600">Completed</div>
+                    <div className="text-xs text-green-600">{t("user.completed_orders")}</div>
                     <div className="font-bold text-green-700">
                       {calculateUserStats(viewingUser.id).completedOrders}
                     </div>
                   </div>
                   <div className="rounded-lg bg-red-50 p-2 text-center border border-red-100">
-                    <div className="text-xs text-red-600">Cancelled</div>
+                    <div className="text-xs text-red-600">{t("user.cancelled_orders")}</div>
                     <div className="font-bold text-red-700">
                       {calculateUserStats(viewingUser.id).cancelledOrders}
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <Separator className="my-4" />
-              
+
               <div className="space-y-2">
-                <h3 className="font-medium">Recent Orders</h3>
+                <h3 className="font-medium">{t("user.recent_orders")}</h3>
                 <ScrollArea className="h-[200px]">
                   {getUserOrders(viewingUser.id).length > 0 ? (
                     <div className="space-y-2">
@@ -508,19 +490,25 @@ const UserManagement: React.FC = () => {
                           <div key={order.id} className="p-2 rounded-lg bg-secondary/30">
                             <div className="flex justify-between items-center">
                               <div>
-                                <div className="font-medium">Order #{order.id.slice(0, 8)}</div>
+                                <div className="font-medium">
+                                  {t("user.order", { id: order.id.slice(0, 8) })}
+                                </div>
                                 <div className="text-xs text-muted-foreground">
                                   {new Date(order.createdAt).toLocaleDateString()}
                                 </div>
                               </div>
                               <div className="text-right">
-                                <Badge className={`
-                                  ${order.status === "completed" ? "bg-green-500" : 
-                                    order.status === "processing" ? "bg-yellow-500" : 
-                                    order.status === "submitted" ? "bg-blue-500" : "bg-red-500"} 
-                                  text-white
-                                `}>
-                                  {order.status}
+                                <Badge
+                                  className={`${order.status === "completed"
+                                      ? "bg-green-500"
+                                      : order.status === "processing"
+                                        ? "bg-yellow-500"
+                                        : order.status === "submitted"
+                                          ? "bg-blue-500"
+                                          : "bg-red-500"
+                                    } text-white`}
+                                >
+                                  {t(`user.order_status_${order.status}`)}
                                 </Badge>
                                 <div className="text-sm font-medium mt-1">
                                   ${order.total.toFixed(2)}
@@ -532,7 +520,7 @@ const UserManagement: React.FC = () => {
                     </div>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      No orders found for this user
+                      {t("user.no_orders")}
                     </div>
                   )}
                 </ScrollArea>
@@ -541,7 +529,7 @@ const UserManagement: React.FC = () => {
           )}
           <DialogFooter>
             <Button onClick={() => setShowUserStatsDialog(false)}>
-              Close
+              {t("user.close")}
             </Button>
           </DialogFooter>
         </DialogContent>

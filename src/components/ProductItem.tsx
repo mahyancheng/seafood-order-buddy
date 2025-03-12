@@ -8,6 +8,7 @@ import { Product } from "@/context/OrderContext";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 interface ProductItemProps {
   product: Product;
@@ -18,6 +19,8 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t, i18n } = useTranslation("global");
+  
 
   const handleAddToCart = () => {
     setIsLoading(true);
@@ -43,14 +46,13 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
         <Badge
           variant="secondary"
           className="mb-3 font-medium"
-        >
-          ${product.price.toFixed(2)} / {product.unit}
+        >  ${product.price.toFixed(2)} / {t(`unit.${product.unit}`)}
         </Badge>
         
         <div className="space-y-3 mt-3">
           <div>
             <label htmlFor={`quantity-${product.id}`} className="text-sm font-medium mb-1 block">
-              Quantity ({product.unit})
+            {t("product.quantity_label", { unit: product.unit })}
             </label>
             <Input
               id={`quantity-${product.id}`}
@@ -65,11 +67,11 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
           
           <div>
             <label htmlFor={`notes-${product.id}`} className="text-sm font-medium mb-1 block">
-              Special instructions
+            {t("product.special_instructions")}
             </label>
             <Textarea
               id={`notes-${product.id}`}
-              placeholder="Any special instructions..."
+              placeholder={t("product.special_instructions_placeholder")}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="glass-input h-20 text-sm resize-none"
@@ -85,7 +87,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
           disabled={isLoading || quantity <= 0}
         >
           <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform" />
-          {isLoading ? "Adding..." : "Add to Cart"}
+          {isLoading ? t("product.adding_to_cart") : t("product.add_to_cart")}
         </Button>
       </CardFooter>
     </Card>

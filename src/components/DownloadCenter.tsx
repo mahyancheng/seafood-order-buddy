@@ -10,6 +10,7 @@ import { FileUp, Download, File, FileText, PlusCircle, Trash2, Calendar, BarChar
 import { BrochureFile, handleFileUpload, formatFileSize, formatFileDate } from "@/utils/fileUtils";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 // Mock initial brochures for demonstration
 const initialBrochures: BrochureFile[] = [
@@ -46,6 +47,7 @@ const DownloadCenter: React.FC = () => {
   const { isAdmin } = useAuth();
   const [brochures, setBrochures] = useState<BrochureFile[]>(initialBrochures);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const { t, i18n } = useTranslation("global");
 
   const handleUploadSuccess = (newBrochure: BrochureFile) => {
     setBrochures([newBrochure, ...brochures]);
@@ -95,10 +97,8 @@ const DownloadCenter: React.FC = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Download Center</CardTitle>
-            <CardDescription>
-              Download product brochures and catalogs
-            </CardDescription>
+          <CardTitle>{t("downloadCenter.title")}</CardTitle>
+          <CardDescription>{t("downloadCenter.description")}</CardDescription>
           </div>
           
           {isAdmin && (
@@ -106,12 +106,12 @@ const DownloadCenter: React.FC = () => {
               <DialogTrigger asChild>
                 <Button className="gap-2">
                   <FileUp className="h-4 w-4" />
-                  Upload Brochure
+                  {t("downloadCenter.upload_button")}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Upload New Brochure</DialogTitle>
+                  <DialogTitle>{t("downloadCenter.upload_dialog_title")}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="border-2 border-dashed rounded-lg p-10 text-center cursor-pointer hover:bg-secondary/50 transition-colors">
@@ -124,9 +124,9 @@ const DownloadCenter: React.FC = () => {
                     />
                     <label htmlFor="brochure-upload" className="cursor-pointer w-full h-full block">
                       <PlusCircle className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
-                      <p className="text-muted-foreground mb-1">Click to upload or drag and drop</p>
-                      <p className="text-xs text-muted-foreground">PDF, Word, or Excel files (max 5MB)</p>
-                    </label>
+                      <p className="text-muted-foreground mb-1">{t("downloadCenter.upload_instruction")}</p>
+                    <p className="text-xs text-muted-foreground">{t("downloadCenter.upload_file_types")}</p>
+                   </label>
                   </div>
                 </div>
               </DialogContent>
@@ -139,7 +139,7 @@ const DownloadCenter: React.FC = () => {
           <div className="space-y-1">
             {brochures.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                No brochures available for download
+          {t("downloadCenter.no_brochures")}
               </div>
             ) : (
               brochures.map((brochure) => (
@@ -157,7 +157,7 @@ const DownloadCenter: React.FC = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <BarChart className="h-3 w-3" />
-                            {brochure.downloadCount} downloads
+                            {brochure.downloadCount} {t("downloadCenter.download_count")}
                           </span>
                         </div>
                       </div>
@@ -170,7 +170,7 @@ const DownloadCenter: React.FC = () => {
                         onClick={() => handleDownload(brochure)}
                       >
                         <Download className="h-3.5 w-3.5" />
-                        Download
+                        {t("downloadCenter.download_button")}
                       </Button>
                       
                       {isAdmin && (

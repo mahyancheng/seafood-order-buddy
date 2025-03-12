@@ -6,9 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const OrderHistory: React.FC = () => {
   const { orders, products } = useOrder();
+    const { t, i18n } = useTranslation("global");
   
   // Sort orders by date (newest first)
   const sortedOrders = [...orders].sort((a, b) => 
@@ -33,13 +35,13 @@ const OrderHistory: React.FC = () => {
   return (
     <Card className="animate-fade-in">
       <CardHeader>
-        <CardTitle>Order History</CardTitle>
-        <CardDescription>View your past orders and their status</CardDescription>
+        <CardTitle>{t("order.history_title")}</CardTitle>
+        <CardDescription>{t("order.history_description")}</CardDescription>
       </CardHeader>
       <CardContent>
         {sortedOrders.length === 0 ? (
           <div className="text-center py-10 text-muted-foreground">
-            No orders found. Place your first order to see it here.
+              {t("order.no_orders")}
           </div>
         ) : (
           <ScrollArea className="h-[calc(100vh-300px)]">
@@ -57,7 +59,7 @@ const OrderHistory: React.FC = () => {
                       <div className="flex w-full justify-between items-center pr-4">
                         <div className="text-left">
                           <div className="font-medium">
-                            Order #{order.id.substring(6, 14)}
+                            {t("order.order_number", { id: order.id.substring(6, 14) })}
                           </div>
                           <div className="text-xs text-muted-foreground">
                             {new Date(order.createdAt).toLocaleDateString()} - 
@@ -69,7 +71,7 @@ const OrderHistory: React.FC = () => {
                             ${order.total.toFixed(2)}
                           </span>
                           <Badge variant="outline" className={getStatusColor(order.status)}>
-                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            {t(`order.status.${order.status.toLowerCase()}`)}
                           </Badge>
                         </div>
                       </div>
@@ -77,28 +79,28 @@ const OrderHistory: React.FC = () => {
                     <AccordionContent className="px-4">
                       <div className="space-y-4">
                         <div>
-                          <h4 className="text-sm font-medium mb-2">Client Information</h4>
+                          <h4 className="text-sm font-medium mb-2">{t("order.client_info")}</h4>
                           <div className="grid grid-cols-2 gap-2 text-sm">
                             <div>
-                              <span className="text-muted-foreground">Company:</span> {order.clientInfo?.name}
+                              <span className="text-muted-foreground">{t("order.company")}:</span> {order.clientInfo?.name}
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Contact:</span> {order.clientInfo?.contactPerson}
+                              <span className="text-muted-foreground">{t("order.contact")}:</span> {order.clientInfo?.contactPerson}
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Phone:</span> {order.clientInfo?.phone}
+                              <span className="text-muted-foreground">{t("order.phone")}:</span> {order.clientInfo?.phone}
                             </div>
                             <div>
-                              <span className="text-muted-foreground">Email:</span> {order.clientInfo?.email || "N/A"}
+                              <span className="text-muted-foreground">{t("order.email")}:</span> {order.clientInfo?.email || "N/A"}
                             </div>
                             <div className="col-span-2">
-                              <span className="text-muted-foreground">Address:</span> {order.clientInfo?.address}
+                              <span className="text-muted-foreground">{t("order.address")}:</span> {order.clientInfo?.address}
                             </div>
                           </div>
                         </div>
-                        
+
                         <div>
-                          <h4 className="text-sm font-medium mb-2">Order Items</h4>
+                          <h4 className="text-sm font-medium mb-2">{t("order.items")}</h4>
                           <div className="space-y-2">
                             {order.items.map((item, index) => {
                               const product = products.find(p => p.id === item.productId);
@@ -116,15 +118,15 @@ const OrderHistory: React.FC = () => {
                             })}
                           </div>
                         </div>
-                        
+
                         <div className="flex justify-between pt-2 border-t text-sm font-medium">
-                          <span>Total</span>
+                          <span>{t("order.total")}</span>
                           <span>${order.total.toFixed(2)}</span>
                         </div>
-                        
+
                         {order.specialInstructions && (
                           <div className="pt-2">
-                            <span className="text-sm font-medium">Special Instructions:</span>
+                            <span className="text-sm font-medium">{t("order.special_instructions")}</span>
                             <p className="text-sm text-muted-foreground mt-1">{order.specialInstructions}</p>
                           </div>
                         )}
